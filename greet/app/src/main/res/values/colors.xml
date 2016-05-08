@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="near_bg">#ffffff</color>
+    <color name="near_blue">#01afff</color>
+    <color name="near_grey">#cccccc</color>
+    <color name="near_yellow">#f9d93a</color>
+    <color name="actionbar_grey">#797f87</color>
+    <color name="actionbar_blueblack">#262931</color>
+        
+</resources>
