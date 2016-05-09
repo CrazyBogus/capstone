@@ -112,20 +112,9 @@ public class FirstFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_first, container, false);
         userList = (ListView) view.findViewById(R.id.user_list);
-
         userList.setAdapter(adapter);
         userList.setDivider(null);
-        // TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel);
 
-//        btn_login = (ImageButton) view.findViewById(R.id.login_imageButton);
-//        btn_login.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent newActivity = new Intent(getActivity(), Login.class);
-//
-//                startActivity(newActivity);
-//            }
-//        });
 
         return view;
     }
@@ -154,33 +143,33 @@ public class FirstFragment extends Fragment {
 
         btAdapter.setName("hi");
 
-        AdvertiseSettings.Builder settings = new AdvertiseSettings.Builder();
-        settings.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED);
-        settings.setConnectable(true); // We are not handling connections.
-        settings.setTimeout(0); // No time limit;
-        settings.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH); // Long range.
-
-
-        AdvertiseData.Builder data = new AdvertiseData.Builder();
-
-
-        data.addServiceUuid(App_UUID).setIncludeDeviceName(true).setIncludeTxPowerLevel(false);
-        btAdapter.getBluetoothLeAdvertiser().startAdvertising(settings.build(), data.build(), adCallback);
-
-
-        ScanSettings setting = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setReportDelay(500)
-                .build();
-
-
-        ScanFilter.Builder filter = new ScanFilter.Builder();
-        filter.setServiceUuid(App_UUID);
-        filters = new ArrayList<ScanFilter>();
-        filters.add(filter.build());
-
-
-        btAdapter.getBluetoothLeScanner().startScan(filters, setting, scanCallback);
+//        AdvertiseSettings.Builder settings = new AdvertiseSettings.Builder();
+//        settings.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED);
+//        settings.setConnectable(true); // We are not handling connections.
+//        settings.setTimeout(0); // No time limit;
+//        settings.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH); // Long range.
+//
+//
+//        AdvertiseData.Builder data = new AdvertiseData.Builder();
+//
+//
+//        data.addServiceUuid(App_UUID).setIncludeDeviceName(true).setIncludeTxPowerLevel(false);
+//        btAdapter.getBluetoothLeAdvertiser().startAdvertising(settings.build(), data.build(), adCallback);
+//
+//
+//        ScanSettings setting = new ScanSettings.Builder()
+//                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+//                .setReportDelay(2000)
+//                .build();
+//
+//
+//        ScanFilter.Builder filter = new ScanFilter.Builder();
+//        filter.setServiceUuid(App_UUID);
+//        filters = new ArrayList<ScanFilter>();
+//        filters.add(filter.build());
+//
+//
+//        btAdapter.getBluetoothLeScanner().startScan(filters, setting, scanCallback);
     }
 
     @Override
@@ -264,7 +253,7 @@ public class FirstFragment extends Fragment {
                 result = results.get(i);
                 device_name = result.getScanRecord().getDeviceName();
 
-                // if(user_list.check_exist(result.getScanRecord().getDeviceName())){User1.Setuse_bit(10);}
+
 
                 //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
                 if (user_list.check_exist(device_name)) {
@@ -296,13 +285,14 @@ public class FirstFragment extends Fragment {
                             Log.d("온석세스 안에서 : ", response.toString());
                             try {
 
-                                //ImageView iv = (ImageView)findViewById(R.id.user_icon);
+
                                 final String name = response.getString("nickname");
                                 final String image_str = response.getString("profile_picture");
                                 byte[] bytePlainOrg = Base64.decode(image_str, 0);
                                 //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
                                 ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
                                 final Bitmap bm = BitmapFactory.decodeStream(inStream);
+
                                 //유저 객체 생성
                                 User1 = new User_Info();
                                 //어뎁터에 유저 객체 넣기
@@ -313,26 +303,6 @@ public class FirstFragment extends Fragment {
                                 //객체에 아이디 넣기
                                 User1.SetId(name);
                                 User1.GetId();
-
-
-//                                if (!(user_list.check_exist(User1.GetId()))) {
-//                                    adapter.add(User1);
-//                                    // adapter.add(User1);
-//
-//                                    User1.SetId(name);
-//                                    final String image_str = response.getString("profile_picture");
-//
-//                                    byte[] bytePlainOrg = Base64.decode(image_str, 0);
-//                                    //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
-//                                    ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
-//                                    final Bitmap bm = BitmapFactory.decodeStream(inStream);
-//                                    User1.SetImage(bm);
-//                                    User1.GetImage();
-//                                    Log.d("여기는 한번만 들어와야 되는데.", "");
-//
-//                                    adapter.notifyDataSetChanged();
-
-//                                }
 
 
                             } catch (JSONException e) {

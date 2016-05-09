@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_three;
     private Button btn_four;
     private LinearLayout layout_actionbar;
+    private ImageView add_new_card;
     private static boolean start_flag = true;
 
     @Override
@@ -105,10 +106,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Code goes here
                 if(position==0) {
                     layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+                    add_new_card.setVisibility(View.INVISIBLE);
                 }else if(position==1){
                     layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
+                    add_new_card.setVisibility(View.VISIBLE);
                 }else if(position==2){
                     layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
+                    add_new_card.setVisibility(View.INVISIBLE);
                 }else{
                     layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected4);
                 }
@@ -119,6 +123,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onPageScrollStateChanged(int state) {
                 // Code goes here
+            }
+        });
+
+        add_new_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newActivity = new Intent(MainActivity.this, My_Profile.class);
+
+                startActivity(newActivity);
             }
         });
     }
@@ -157,19 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     return null;
             }
         }
-
-
-
-//        // Returns the page title for the top indicator
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            return "Page " + position;
-//        }
-
-
-
-
-
     }
 
 
@@ -190,13 +190,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         layout_actionbar = (LinearLayout) findViewById(R.id.layout_actionbar);
         layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+        add_new_card = (ImageView) findViewById(R.id.add_new_card);
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_one:
-            setCurrentInflateItem(0);
-
+                setCurrentInflateItem(0);
                 break;
             case R.id.btn_two:
                 setCurrentInflateItem(1);
@@ -213,12 +213,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setCurrentInflateItem(int type){
         if(type==0){
             layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+            add_new_card.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(0);
         }else if(type==1){
             layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
+            add_new_card.setVisibility(View.VISIBLE);
             vpPager.setCurrentItem(1);
         }else if(type==2){
             layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
+            add_new_card.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(2);
         }else{
             layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected4);
@@ -229,13 +232,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private View.OnClickListener mPagerListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId())
-            {
+            switch (v.getId()) {
                 case R.id.btn_one:
                     Toast.makeText(getApplicationContext(), "btn_0", Toast.LENGTH_SHORT).show();
                     break;
-            }
 
+
+            }
         }
     };
 

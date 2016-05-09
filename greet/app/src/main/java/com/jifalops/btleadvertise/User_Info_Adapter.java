@@ -103,7 +103,7 @@ public class User_Info_Adapter extends BaseAdapter implements View.OnClickListen
             // 레이아웃이 메모리에 올라왔기 때문에 이를 이용하여 포함된 뷰들을 참조할 수 있습니다.
             imgUserIcon = (ImageView) v.findViewById(R.id.user_icon);
             tvUserName = (TextView) v.findViewById(R.id.user_name);
-            tvUserPhoneNumber = (TextView) v.findViewById(R.id.user_phone_number);
+           // tvUserPhoneNumber = (TextView) v.findViewById(R.id.user_phone_number);
             IsAdded = (ImageButton) v.findViewById(R.id.isSelected_Star);
 
 
@@ -121,7 +121,7 @@ public class User_Info_Adapter extends BaseAdapter implements View.OnClickListen
                // imgUserIcon.setImageDrawable(mUser.getUserIcon());
             }
             tvUserName.setText(mUser.getUserName());
-            tvUserPhoneNumber.setText(mUser.getUserPhoneNumber());
+            //tvUserPhoneNumber.setText(mUser.getUserPhoneNumber());
 
 
         }

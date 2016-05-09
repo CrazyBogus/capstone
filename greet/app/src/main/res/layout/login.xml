@@ -68,7 +68,11 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_gravity="center"
-        android:layout_margin="20dp"/>
+
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="120dp"
+        android:layout_alignParentBottom="true"/>
 
     <!--<com.kakao.usermgmt.LoginButton-->
         <!--android:id="@+id/com_kakao_login"-->

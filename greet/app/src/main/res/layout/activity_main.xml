@@ -15,6 +15,15 @@
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:src="@drawable/near_logo"/>
+
+        <ImageView
+            android:id="@+id/add_new_card"
+            android:layout_width="50sp"
+            android:layout_height="40sp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="210dp"
+            android:src="@drawable/my_profile_add_new_card"
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <android.support.v4.view.ViewPager
