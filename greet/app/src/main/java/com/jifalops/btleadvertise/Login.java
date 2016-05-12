@@ -60,9 +60,10 @@ public class Login extends Activity {
         });
 
 
+//        callback = new SessionCallback();
+//        Session.getCurrentSession().addCallback(callback);
+
        // getAppKeyHash();
-       // callback = new SessionCallback();
-       // Session.getCurrentSession().addCallback(callback);
 
 
 //        try {
@@ -108,7 +109,6 @@ public class Login extends Activity {
                 editText_login_name.getHint();
             }
         });
-
 
     }
 //

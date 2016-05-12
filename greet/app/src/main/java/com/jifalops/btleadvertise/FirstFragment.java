@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelUuid;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -28,11 +30,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jifalops.btleadvertise.Adapters.UserInfoAdapter;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -67,20 +72,26 @@ public class FirstFragment extends Fragment {
     ParcelUuid App_UUID = new ParcelUuid(UUID.fromString("20112017-0000-1000-8000-00805f9b34fb"));
     /* 유저리스트뷰 설정 */
     private ListView userList;
-    private User_Info_Adapter adapter;
+    private UserInfoAdapter adapter;
     private User_List user_list = new User_List();
     private My_Info my_info;
-
+    private String copy_device_name;
+    private Timer mTimer;
+    private TimerTask mTask;
     // 리스트 아이템 데이터를 저장할 배열
     private ArrayList<User_Info> User_Data;
     User_Info User1 = new User_Info();
-
-
+    private int use_bit = 5;
+    private static String kakaoid=null;
+    private Thread myThread;
     // newInstance constructor for creating fragment with arguments
     public static FirstFragment newInstance(int page, String title) {
         FirstFragment fragmentFirst = new FirstFragment();
         Bundle args = new Bundle();
 
+        //고유값을 위해 kakaoId 가져오기
+        if(title != null)
+        kakaoid = title;
 
         args.putInt("someInt", page);
         args.putString("someTitle", title);
@@ -100,9 +111,7 @@ public class FirstFragment extends Fragment {
         btManager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
 
         // Adapter 생성
-        adapter = new User_Info_Adapter(getActivity());
-        // 리스트뷰 참조 및 Adapter달기
-
+        adapter = new UserInfoAdapter(getActivity());
 
     }
 
@@ -135,42 +144,63 @@ public class FirstFragment extends Fragment {
         if (getActivity().isFinishing()) {
             return;
         }
+
+
+//        // 리스트뷰 참조 및 Adapter달기
+//        myThread = new Thread(new Runnable() {
+//            public void run() {
+//                while (true) {
+//                    try {
+//                        handler.sendMessage(handler.obtainMessage());
+//                        Thread.sleep(1000);
+//                    } catch (Throwable t) {
+//                    }
+//                }
+//            }
+//        });
+//        myThread.start();
         btAdapter = btManager.getAdapter();
         if (btAdapter == null || !btAdapter.isEnabled()) {
             startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT);
             return;
         }
 
-        btAdapter.setName("hi");
+        if(kakaoid != null)
+        btAdapter.setName(kakaoid);
+        else{btAdapter.setName("hi");}
+        AdvertiseSettings.Builder settings = new AdvertiseSettings.Builder();
+        settings.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED);
+        settings.setConnectable(true); // We are not handling connections.
+        settings.setTimeout(0); // No time limit;
+        settings.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH); // Long range.
 
-//        AdvertiseSettings.Builder settings = new AdvertiseSettings.Builder();
-//        settings.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED);
-//        settings.setConnectable(true); // We are not handling connections.
-//        settings.setTimeout(0); // No time limit;
-//        settings.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_HIGH); // Long range.
-//
-//
-//        AdvertiseData.Builder data = new AdvertiseData.Builder();
-//
-//
-//        data.addServiceUuid(App_UUID).setIncludeDeviceName(true).setIncludeTxPowerLevel(false);
-//        btAdapter.getBluetoothLeAdvertiser().startAdvertising(settings.build(), data.build(), adCallback);
-//
-//
-//        ScanSettings setting = new ScanSettings.Builder()
-//                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-//                .setReportDelay(2000)
-//                .build();
-//
-//
-//        ScanFilter.Builder filter = new ScanFilter.Builder();
-//        filter.setServiceUuid(App_UUID);
-//        filters = new ArrayList<ScanFilter>();
-//        filters.add(filter.build());
-//
-//
-//        btAdapter.getBluetoothLeScanner().startScan(filters, setting, scanCallback);
+
+        AdvertiseData.Builder data = new AdvertiseData.Builder();
+
+
+        data.addServiceUuid(App_UUID).setIncludeDeviceName(true).setIncludeTxPowerLevel(false);
+        btAdapter.getBluetoothLeAdvertiser().startAdvertising(settings.build(), data.build(), adCallback);
+
+
+        ScanSettings setting = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .setReportDelay(500)
+                .build();
+
+
+        ScanFilter.Builder filter = new ScanFilter.Builder();
+        filter.setServiceUuid(App_UUID);
+        filters = new ArrayList<ScanFilter>();
+        filters.add(filter.build());
+
+
+        btAdapter.getBluetoothLeScanner().startScan(filters, setting, scanCallback);
+
+
+
+
     }
+
 
     @Override
     public void onPause() {
@@ -231,13 +261,6 @@ public class FirstFragment extends Fragment {
         public void onScanResult(int callbackType, ScanResult result) {
 
 
-//            User1.SetId(result.getScanRecord().getDeviceName());
-//            User1.GetId();
-//            adapter.add(User1);
-//            // Data가 변경 되있음을 알려준다.
-//            adapter.notifyDataSetChanged();
-
-            //  printScanResult(result);
 //
         }
 
@@ -247,18 +270,20 @@ public class FirstFragment extends Fragment {
             ScanResult result = null;
             String device_name = null;
 
-            Log.d("scan results 결과 : ", results.toString());
+
+
+            //   Log.d("scan results 결과 : ", results.toString());
             for (int i = 0; i < results.size(); i++) {
+
 
                 result = results.get(i);
                 device_name = result.getScanRecord().getDeviceName();
 
 
-
                 //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
                 if (user_list.check_exist(device_name)) {
                     Log.d("user name : ", device_name);
-                    Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
+                     Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
 
                     //HTTP 통신
                     String url = "http://52.69.46.152:8000/api/find_members/random";
@@ -271,7 +296,7 @@ public class FirstFragment extends Fragment {
 
 
                     param2.put("id", device_name);
-
+                    copy_device_name = device_name;
 
                     client.post(mContext, url, param2, new JsonHttpResponseHandler() {
 
@@ -287,6 +312,7 @@ public class FirstFragment extends Fragment {
 
 
                                 final String name = response.getString("nickname");
+
                                 final String image_str = response.getString("profile_picture");
                                 byte[] bytePlainOrg = Base64.decode(image_str, 0);
                                 //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
@@ -303,6 +329,8 @@ public class FirstFragment extends Fragment {
                                 //객체에 아이디 넣기
                                 User1.SetId(name);
                                 User1.GetId();
+                                User1.Setuse_bit(use_bit);
+                                User1.Getuse_bit();
 
 
                             } catch (JSONException e) {
@@ -322,11 +350,42 @@ public class FirstFragment extends Fragment {
                     });
 
 
-                }
-                // Data가 변경 되있음을 알려준다.
+                } //데이터 추가 끝
+
                 adapter.notifyDataSetChanged();
+                Log.d("여기      걸려 ", "");
 
             }
+
+     //       전체 리스트 중에서 얘가 있는지를 봐야 돼 없으면 여기서 깍아줘
+     //   만약 유저리스트에 얘가 존재하지 않는다면 유즈비트를 깎아준
+        if(!user_list.check_usebit(copy_device_name))
+        {
+            Log.d("이프문 : " ,"");
+            use_bit--;
+            User1.Setuse_bit(use_bit);
+            User1.Getuse_bit();
+
+            if(User1.Getuse_bit() == 0)
+            {
+                user_list.remove_user(copy_device_name);
+            }
+        }
+        else if(user_list.check_usebit(copy_device_name))
+        { //만약 그게 아니라면 다시 유즈비트를 살려줘
+            Log.d("이프엘스문 : ", "");
+            use_bit = 5;
+            User1.Setuse_bit(use_bit);
+            User1.Getuse_bit();
+        }
+        else
+        {
+            Log.d("엘스문 그냥 넘어가자 : ", "");
+        }
+
+
+//            Log.d("adapter notified : ", "ㅅㄱ");
+            // Data가 변경 되있음을 알려준다.
 
 
         }
@@ -340,4 +399,44 @@ public class FirstFragment extends Fragment {
 
     };
 }
+
+
+
+
+
+//    Handler handler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            Log.d("흠.... ", "");
+//            updateThread();
+//        }
+//    };
+//    private void updateThread() {
+//        Log.d("timer안으로 들어왔","");
+//        //전체 리스트 중에서 얘가 있는지를 봐야 돼 없으면 여기서 깍아줘
+//        //만약 유저리스트에 얘가 존재하지 않는다면 유즈비트를 깎아준
+//        if(!user_list.check_usebit(copy_device_name))
+//        {
+//            Log.d("이프문 : " ,"");
+//            use_bit--;
+//            User1.Setuse_bit(use_bit);
+//            User1.Getuse_bit();
+//
+//            if(User1.Getuse_bit() == 0)
+//            {
+//                user_list.remove_user(copy_device_name);
+//            }
+//        }
+//        else if(user_list.check_usebit(copy_device_name))
+//        { //만약 그게 아니라면 다시 유즈비트를 살려줘
+//            Log.d("이프엘스문 : ", "");
+//            use_bit = 5;
+//            User1.Setuse_bit(use_bit);
+//            User1.Getuse_bit();
+//        }
+//        else
+//        {
+//            Log.d("엘스문 그냥 넘어가자 : ", "");
+//        }
+//    }
 

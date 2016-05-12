@@ -3,6 +3,7 @@ package com.jifalops.btleadvertise;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.kakao.auth.ErrorCode;
 import com.kakao.network.ErrorResult;
@@ -56,18 +57,26 @@ public class kakaoSignupActivity extends Activity {
             @Override
             public void onSuccess(UserProfile userProfile) {  //성공 시 userProfile 형태로 반환
                 Logger.d("UserProfile : " + userProfile);
-                redirectMainActivity(); // 로그인 성공시 MainActivity로
+                String kakaoId = String.valueOf(userProfile.getId());
+                Log.d("카카오 로그인 아이디 : ", kakaoId);
+                redirectMainActivity(kakaoId); // 로그인 성공시 MainActivity로
             }
         });
     }
 
-    private void redirectMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));
+    private void redirectMainActivity(String kakaoID) {
+        Intent intent = new Intent(this, MainActivity.class);
+        Bundle b = new Bundle();
+        b.putString("kakaoID", kakaoID); //Your id
+        intent.putExtras(b); //Put your id to your next Intent
+        startActivity(intent);
         finish();
     }
     protected void redirectLoginActivity() {
         final Intent intent = new Intent(this, Login.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+
         startActivity(intent);
         finish();
     }

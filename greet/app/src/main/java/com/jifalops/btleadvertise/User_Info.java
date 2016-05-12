@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.ViewDebug;
 import android.widget.ImageView;
 
+import com.jifalops.btleadvertise.Adapters.UserInfoAdapter;
+
 import java.util.ArrayList;
 
 /**
@@ -35,7 +37,7 @@ public class User_Info {
     private int use_bit = 0;
     private Bitmap UserIcon;
     private ImageView realUserIcon;
-    private User_Info_Adapter A;
+    private UserInfoAdapter A;
     User_Info(Drawable userIcon, String userName, String userPhoneNumber) {
         mUserIcon = userIcon;
         mUserName = userName;

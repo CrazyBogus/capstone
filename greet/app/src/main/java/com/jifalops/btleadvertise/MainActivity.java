@@ -1,71 +1,24 @@
 package com.jifalops.btleadvertise;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.le.AdvertiseCallback;
-import android.bluetooth.le.AdvertiseData;
-import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.ParcelUuid;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Base64;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import cz.msebera.android.httpclient.Header;
+import com.jifalops.btleadvertise.Adapters.MainAdapter;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    FragmentPagerAdapter adapterViewPager;
+    private MainAdapter adapterViewPager;
     private ViewPager vpPager;
     private Button btn_one;
     private Button btn_two;
@@ -73,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_four;
     private LinearLayout layout_actionbar;
     private ImageView add_new_card;
+    private static String kakaoID;
+
     private static boolean start_flag = true;
 
     @Override
@@ -84,10 +39,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             start_flag = false;
             finish();
         }
+        Bundle b = getIntent().getExtras();
+        if(b != null)
+            kakaoID = b.getString("kakaoID");
 
         setLayout();
         vpPager = (ViewPager) findViewById(R.id.vpPager);
-        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager());
+        adapterViewPager = new MainAdapter(getSupportFragmentManager());
+        adapterViewPager.setKakaoID(kakaoID);
+
         vpPager.setAdapter(adapterViewPager);
 
         // Attach the page change listener inside the activity
@@ -137,40 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public static class MyPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 4;
 
-        public MyPagerAdapter(FragmentManager fragmentManager) {
-            super(fragmentManager);
-
-        }
-
-        // Returns total number of pages
-        @Override
-        public int getCount() {
-            return NUM_ITEMS;
-        }
-
-        // Returns the fragment to display for that page
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
-
-                    return FirstFragment.newInstance(0, null);
-
-
-                case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return SecondFragment.newInstance(1, null);
-                case 2: // Fragment # 1 - This will show SecondFragment
-                    return ThirdFragment.newInstance(2, null);
-                case 3: // Fragment # 1 - This will show SecondFragment
-                    return FourthFragment.newInstance(3,null);
-                default:
-                    return null;
-            }
-        }
-    }
 
 
 

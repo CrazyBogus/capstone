@@ -82,12 +82,13 @@ public class User_List {
         if (user_num > 0 && UserList.contains(id) && id!=null)
         {
 
-            Log.d("usebit_유저 리스트에 존재한다", id);
+           // Log.d("usebit_유저 리스트에 존재한다", id);
+
             return true;
         }
         else
         {
-            Log.d("userbit_ else문","");
+         //   Log.d("userbit_ else문","");
             return false;
         }
     }
