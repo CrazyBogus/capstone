@@ -124,7 +124,8 @@ android:orientation="vertical"
             android:text="이름"
             android:textSize="17sp"
             android:textAlignment="center"
-            android:textColor="#3e3e3e"/>
+            android:textColor="#3e3e3e"
+            android:id="@+id/textview_name" />
 
             <ImageView
                 android:layout_width="0dp"
@@ -132,7 +133,8 @@ android:orientation="vertical"
                 android:layout_weight="1"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:src="@drawable/my_profile_edit_write"/>
+                android:src="@drawable/my_profile_edit_write"
+                android:id="@+id/btn_edit_name" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -151,14 +153,16 @@ android:orientation="vertical"
             android:gravity="center"
             android:textSize="17sp"
             android:textAlignment="center"
-            android:textColor="#3e3e3e"/>
+            android:textColor="#3e3e3e"
+            android:id="@+id/textview_phonenumber" />
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:layout_weight="1"
-                android:src="@drawable/my_profile_edit_write"/>
+                android:src="@drawable/my_profile_edit_write"
+                android:id="@+id/btn_edit_phonenumber" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -177,14 +181,16 @@ android:orientation="vertical"
             android:gravity="center"
             android:textSize="17sp"
             android:textAlignment="center"
-            android:textColor="#3e3e3e"/>
+            android:textColor="#3e3e3e"
+            android:id="@+id/textview_selfintro" />
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:layout_weight="1"
-                android:src="@drawable/my_profile_edit_write"/>
+                android:src="@drawable/my_profile_edit_write"
+                android:id="@+id/btn_edit_selfintro" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -203,14 +209,16 @@ android:orientation="vertical"
             android:gravity="center"
             android:textSize="17sp"
             android:textAlignment="center"
-            android:textColor="#3e3e3e"/>
+            android:textColor="#3e3e3e"
+            android:id="@+id/textview_sns" />
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:layout_weight="1"
-                android:src="@drawable/my_profile_edit_write"/>
+                android:src="@drawable/my_profile_edit_write"
+                android:id="@+id/btn_edit_sns" />
         </LinearLayout>
         <!--동영상-->
         <LinearLayout

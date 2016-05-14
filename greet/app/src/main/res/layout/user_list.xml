@@ -9,7 +9,7 @@
     android:descendantFocusability="blocksDescendants">
 
     <!--리스트뷰 아이템 -->
-    <com.jifalops.btleadvertise.RoundImageView
+    <com.jifalops.btleadvertise.View.RoundImageView
         android:id="@+id/user_icon"
         android:src="@drawable/test1"
         android:layout_width="59dp"

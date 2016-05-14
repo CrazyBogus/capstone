@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jifalops.btleadvertise.R;
-import com.jifalops.btleadvertise.User_Info;
+import com.jifalops.btleadvertise.Functional.User_Info;
 
 import java.util.ArrayList;
 
@@ -128,7 +128,15 @@ public class UserInfoAdapter extends BaseAdapter implements View.OnClickListener
         mUserData.add(user);
         Log.d("지금 인덱스는 : ", Integer.toString(getCount()));
     }
-
+    public void remove(User_Info user)
+    {
+        mUserData.remove(user);
+    }
+    public boolean contains(User_Info user)
+    {
+        if(mUserData.contains(user)) return true;
+        else return false;
+    }
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
