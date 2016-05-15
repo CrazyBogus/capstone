@@ -2,6 +2,12 @@ package com.jifalops.btleadvertise.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -95,7 +101,8 @@ public class MyCardAdapter extends BaseAdapter {
     public void addItem(Bitmap icon) {
         MyCardListViewItem item = new MyCardListViewItem();
 
-        item.setImageView(icon);
+
+        item.setImageView(getRoundedCornerBitmap(icon));
 
         Log.d("이리로 오긴오나", "왔어");
         listViewItemList.add(item);
@@ -116,4 +123,21 @@ public class MyCardAdapter extends BaseAdapter {
         public ImageView img;
     }
 
+    public Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = 10;
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
+    }
 }

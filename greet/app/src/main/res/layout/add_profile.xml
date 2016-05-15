@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/near_bg"
+    android:id="@+id/add_profile">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight="3"
+
+            android:background="@color/near_blue">
+
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/my_profile_back"/>
+
+            <ImageView
+                android:layout_width="80sp"
+                android:layout_height="40sp"
+
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="100dp"
+                android:src="@drawable/near_logo"/>
+            <ImageView
+                android:id="@+id/edit_complete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="100dp"
+                android:src="@drawable/my_profile_edit_complete"/>
+        </LinearLayout>
+
+        <!--파란선을 제외한 큰 레이아웃-->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="11"
+            android:orientation="vertical"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp">
+            <!--관심사 목록-->
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="150dp"
+
+                android:background="#797e86"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="asdasd"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="asdasd"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="asdasd"/>
+
+            </LinearLayout>
+
+            <!--키워드선택버튼-->
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:id="@+id/setting_interests"
+                android:src="@drawable/my_profile_keyword_selected"/>
+
+            <!-- 프로필사진 -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/my_profile_image_default"
+                    android:id="@+id/my_profile_image"/>
+
+                <ImageView
+                    android:id="@+id/edit_profile_image"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="180dp"
+                    android:layout_gravity="right"
+                    android:src="@drawable/my_profile_edit_image"/>
+            </FrameLayout>
+            <!-- 이름 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                >
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:visibility="invisible"
+                    android:src="@drawable/my_profile_toggle_off"/>
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:gravity="center"
+                    android:hint="이름"
+                    android:maxLength="5"
+                    android:background="@null"
+                    android:textSize="17sp"
+                    android:textAlignment="center"
+                    android:textColor="#3e3e3e"
+                    android:id="@+id/textview_name" />
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <!-- 전화번호 -->
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/my_profile_toggle_off"/>
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:hint="전화번호"
+
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:gravity="center"
+                    android:textSize="17sp"
+                    android:textAlignment="center"
+                    android:textColor="#3e3e3e"
+                    android:background="@null"
+                    android:id="@+id/textview_phonenumber" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp">
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/my_profile_toggle_off"/>
+                <!-- 자기소개 -->
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:hint="자기소개"
+                    android:ems="60"
+                    android:maxLength="60"
+                    android:textColorHint="#81D7FF"
+                    android:gravity="center"
+                    android:textSize="17sp"
+                    android:textAlignment="center"
+                    android:textColor="#3e3e3e"
+                    android:id="@+id/textview_selfintro"
+                    android:background="@null" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/my_profile_toggle_off"/>
+                <!-- sns링크 -->
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:hint="SNS링크"
+                    android:maxLength="30"
+                    android:gravity="center"
+                    android:textSize="17sp"
+                    android:textAlignment="center"
+                    android:textColor="#3e3e3e"
+                    android:background="@null"
+                    android:id="@+id/textview_sns" />
+
+            </LinearLayout>
+            <!--동영상-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:src="@drawable/my_profile_video_default"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

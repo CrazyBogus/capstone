@@ -2,6 +2,12 @@ package com.jifalops.btleadvertise.Fragment;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.jifalops.btleadvertise.Activity.MainActivity;
+import com.jifalops.btleadvertise.Activity.My_Profile;
 import com.jifalops.btleadvertise.Adapters.MyCardAdapter;
 import com.jifalops.btleadvertise.R;
 
@@ -20,7 +27,7 @@ import com.jifalops.btleadvertise.R;
 public class SecondFragment extends Fragment {
     private ListView listview ;
     private MyCardAdapter adapter;
-    private Bitmap test;
+
     // Store instance variables
 
     // newInstance constructor for creating fragment with arguments
@@ -38,6 +45,7 @@ public class SecondFragment extends Fragment {
     }
 
     public void setImage(Bitmap bm) {
+
         adapter.addItem(bm);
 //        adapter.notifyDataSetChanged();
     }
@@ -77,7 +85,7 @@ public class SecondFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
                 // TODO : item click
-                Intent newActivity = new Intent(getActivity(), MainActivity.class);
+                Intent newActivity = new Intent(getActivity(), My_Profile.class);
 
                 startActivity(newActivity);
             }
@@ -106,4 +114,6 @@ public class SecondFragment extends Fragment {
 //            Log.d("bm", "after addItem");
 //        }
     }
+
+
 }

@@ -43,7 +43,7 @@ public class User_List {
     }
 
 
-    public boolean check_exist(String id)
+    public int check_exist(String id)
     {
 
         String temp = null;
@@ -55,19 +55,19 @@ public class User_List {
 
                // flag = true;
 
-                return false;
+                return 1;
             }
             else if(id != null && !(UserList.contains(id)))
             {
                 Log.d("go adduser유저리스트에 추가된다 :", id);
                 add_user(id);
-                return true;
+                return 2;
             }
 
             else
             {
                 Log.d("유저 이름으로 null이 오는 경우",id);
-                return true;
+                return 3;
             }
 
 

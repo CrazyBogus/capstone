@@ -85,16 +85,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // Code goes here
                 if (position == 0) {
-                    layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+                    btn_one.setBackgroundResource(R.drawable.actionbar_selected_peoplelist);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.INVISIBLE);
                 } else if (position == 1) {
-                    layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
+                    btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_selected_interest);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.VISIBLE);
                 } else if (position == 2) {
-                    layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
-                    add_new_card.setVisibility(View.INVISIBLE);
+                    btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_selected_editcard);
+                    btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
+
+
+
                 } else {
-                    layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected4);
+                    btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_four.setBackgroundResource(R.drawable.actionbar_selected_option);
+                    add_new_card.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -109,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         add_new_card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent newActivity = new Intent(MainActivity.this, My_Profile.class);
+                Intent newActivity = new Intent(MainActivity.this, Add_Profile.class);
 
                 startActivity(newActivity);
             }
@@ -133,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_three.setOnClickListener(this);
         btn_four.setOnClickListener(this);
 
-        layout_actionbar = (LinearLayout) findViewById(R.id.layout_actionbar);
-        layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+       // layout_actionbar = (LinearLayout) findViewById(R.id.layout_actionbar);
+       // layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
         add_new_card = (ImageView) findViewById(R.id.add_new_card);
     }
 
@@ -158,19 +173,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setCurrentInflateItem(int type) {
         if (type == 0) {
-            layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+            //layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
             add_new_card.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(0);
         } else if (type == 1) {
-            layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
+           // layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
+            btn_two.setBackgroundResource(R.drawable.actionbar_selected_interest);
             add_new_card.setVisibility(View.VISIBLE);
             vpPager.setCurrentItem(1);
         } else if (type == 2) {
-            layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
+          //  layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
+            btn_three.setBackgroundResource(R.drawable.actionbar_selected_editcard);
             add_new_card.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(2);
         } else {
-            layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected4);
+          //  layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected4);
+            btn_four.setBackgroundResource(R.drawable.actionbar_selected_option);
             vpPager.setCurrentItem(3);
         }
     }

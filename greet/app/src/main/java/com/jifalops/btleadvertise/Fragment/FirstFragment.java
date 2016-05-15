@@ -74,8 +74,10 @@ public class FirstFragment extends Fragment {
     // 리스트 아이템 데이터를 저장할 배열
     private ArrayList<User_Info> User_Data;
     private User_Info User1 = new User_Info();
-    private int use_bit = 40;
+    private int use_bit = 30;
     private static String kakaoid=null;
+
+    private boolean flag_Timer;
     int value=0;
     TextView mText;
     TextView mText1;
@@ -105,6 +107,7 @@ public class FirstFragment extends Fragment {
         // Adapter 생성
         adapter = new UserInfoAdapter(getActivity());
 
+        flag_Timer = true;
 
 
     }
@@ -140,6 +143,8 @@ public class FirstFragment extends Fragment {
             return;
         }
 
+        //유저 객체 생성
+        User1 = new User_Info();
 
 
         btAdapter = btManager.getAdapter();
@@ -183,38 +188,41 @@ public class FirstFragment extends Fragment {
 
         btAdapter.getBluetoothLeScanner().startScan(filters, setting, scanCallback);
 
-        //use_bit 깎는 타이머 및 리스트에서 제거
-        timer1 = new CountDownTimer(200*1000, 1000){
-            @Override
-            public void onTick(long millisUntilFinished) { // 총 시간과 주기
-                value++;
+        if(flag_Timer) {
+            //use_bit 깎는 타이머 및 리스트에서 제거
+            timer1 = new CountDownTimer(200 * 1000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) { // 총 시간과 주기
+                    value++;
 
-                try {
+                    try {
+                        if(User1.Getuse_bit()!=0)
+                        use_bit = User1.Getuse_bit();
+
                         use_bit--;
                         User1.Setuse_bit(use_bit);
                         User1.Getuse_bit();
 
-                    mText.setText("usebit : "+User1.Getuse_bit());
-                    mText1.setText("value : "+value);
-                    if(User1.Getuse_bit()==0)
-                    {
-                        user_list.remove_user(copy_device_name);
-                        adapter.remove(User1);
-                        adapter.notifyDataSetChanged();
+                        mText.setText("usebit : " + User1.Getuse_bit());
+                        mText1.setText("value : " + value);
+                        if (User1.Getuse_bit() == 0 || User1.Getuse_bit() == -1) {
+                            user_list.remove_user(copy_device_name);
+                            adapter.remove(User1);
+                            adapter.notifyDataSetChanged();
+                        }
+
+                    } catch (Exception e) {
+
                     }
-
                 }
-                catch (Exception e)
-                {
 
+                @Override
+                public void onFinish() {
+                    Log.d("timer 끝났습니다 : ", "ㅅㄱ");
                 }
-            }
-
-            @Override
-            public void onFinish() {
-                Log.d("timer 끝났습니다 : ", "ㅅㄱ");
-            }
-        }.start();  // 타이머 시작
+            }.start();  // 타이머 시작
+            flag_Timer = false;
+        }
 
     }
 
@@ -280,12 +288,12 @@ public class FirstFragment extends Fragment {
 
 
                 //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
-                if (user_list.check_exist(device_name)) {
+                if (user_list.check_exist(device_name)==2) {
                     Log.d("user name : ", device_name);
                      Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
 
                     //HTTP 통신
-                    String url = "http://52.69.46.152:8000/api/find_members/random";
+                    String url = "http://52.69.46.152:8001/api/find_members/random";
                     AsyncHttpClient client = new AsyncHttpClient();
                     RequestParams param2 = new RequestParams();
 
@@ -316,8 +324,7 @@ public class FirstFragment extends Fragment {
                                 ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
                                 final Bitmap bm = BitmapFactory.decodeStream(inStream);
 
-                                //유저 객체 생성
-                                User1 = new User_Info();
+
                                 //어뎁터에 유저 객체 넣기
                                 adapter.add(User1);
                                 //객체에 이미지 넣기
@@ -350,20 +357,22 @@ public class FirstFragment extends Fragment {
                 } //데이터 추가 끝
 
                 //데이터 존재하면
-                else if(!(user_list.check_exist(device_name))){
-                    Log.d("여기 들어오나","");
+                else if((user_list.check_exist(device_name)) == 1){
+                    Log.d("여기 들어오나","aaaaa");
                     User1.Setuse_bit(50);
                     User1.Getuse_bit();
+                    Log.d("GetUse_bit : ", Integer.toString(User1.Getuse_bit()));
+                    //Log.d("여기 들어오나","bbbbb");
                 }
-//                //데이터가 아예 없어
-//                else if((user_list.check_exist(device_name)) == 3)
-//                {
-//                    Log.d("아무것도 안해","");
-//                }
-//                else
-//                {
-//                    Log.d("미쳤네미쳤어","");
-//                }
+                //데이터가 아예 없어
+                else if((user_list.check_exist(device_name)) == 3)
+                {
+                    Log.d("아무것도 안해","aaaaa");
+                }
+                else
+                {
+                    Log.d("미쳤네미쳤어","aaaa");
+                }
 
                 adapter.notifyDataSetChanged();
             }

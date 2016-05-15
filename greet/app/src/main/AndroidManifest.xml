@@ -61,7 +61,8 @@
             android:windowSoftInputMode="stateAlwaysHidden"
             >
             </activity>
-
+        <activity android:name=".Activity.Add_Profile" android:theme="@android:style/Theme.NoTitleBar" android:hardwareAccelerated="false"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <meta-data android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
     </application>
