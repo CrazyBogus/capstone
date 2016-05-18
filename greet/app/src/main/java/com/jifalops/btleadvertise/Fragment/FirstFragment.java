@@ -120,9 +120,9 @@ public class FirstFragment extends Fragment {
         userList = (ListView) view.findViewById(R.id.user_list);
         userList.setAdapter(adapter);
         userList.setDivider(null);
-        mText=(TextView) view.findViewById(R.id.text);
-        mText1=(TextView) view.findViewById(R.id.text1);
-        mText.setText("asdasdasdasd");
+      //  mText=(TextView) view.findViewById(R.id.text);
+      //  mText1=(TextView) view.findViewById(R.id.text1);
+      //  mText.setText("asdasdasdasd");
         return view;
     }
 
@@ -275,10 +275,7 @@ public class FirstFragment extends Fragment {
             ScanResult result = null;
             String device_name = null;
 
-
-
-
-               Log.d("scan results 결과 : ", results.toString());
+           //    Log.d("scan results 결과 : ", results.toString());
             for (int i = 0; i < results.size(); i++) {
 
 

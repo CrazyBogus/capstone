@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import com.jifalops.btleadvertise.Fragment.FirstFragment;
 import com.jifalops.btleadvertise.Fragment.FourthFragment;
@@ -36,6 +37,7 @@ public class MainAdapter extends FragmentPagerAdapter {
 //        this.bm = bm;
 //        SecondFragment.newInstance(1, bm);
         secondFragment.setImage(bm);
+        Log.d("MainAdapter : ", "setImageView set 완료");
     }
     // Returns total number of pages
     @Override

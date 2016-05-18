@@ -68,8 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        if (extras != null && "element".equals(extras.getString("element"))) {
 //            //원하는 동작
 //        }
-        if(getIntent().hasExtra("bm"))
+        if(getIntent().hasExtra("bm")) {
+            Log.d("MainActivity : ", "has extra bm");
             vpPager.setCurrentItem(1);
+        }
         // Attach the page change listener inside the activity
         vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -218,13 +220,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        intent = getIntent();
 
         if (intent.hasExtra("bm")) {
-            Log.d("bm", "bm is not null");
+            Log.d("MainActivity : ", "bm is not null");
 
             bm = intent.getParcelableExtra("bm");
             adapterViewPager.setImageView(bm);
 
         } else {
-            Log.d("bm", "bm is null");
+            Log.d("MainActivity : ", "bm is null");
         }
 
 //        Log.d("사진", bm.toString());

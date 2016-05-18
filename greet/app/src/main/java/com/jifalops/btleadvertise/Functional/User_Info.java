@@ -65,7 +65,7 @@ public class User_Info {
     public void Setuse_bit(int bit)
     {
         this.use_bit = bit;
-        Log.d("usebit깎으러왔어연 : ",Integer.toString(bit));
+      //  Log.d("usebit깎으러왔어연 : ",Integer.toString(bit));
     }
     public int Getuse_bit()
     {
