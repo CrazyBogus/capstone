@@ -1,21 +1,28 @@
 package com.jifalops.btleadvertise.Activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +40,7 @@ import java.util.Date;
 
 /* 주변 리스트를 띄워주는 액티비티 */
 
-public class My_Profile extends FragmentActivity {
+public class My_Profile extends ActionBarActivity implements View.OnClickListener {
     private ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
     private ImageView my_profile_image;
@@ -42,9 +49,14 @@ public class My_Profile extends FragmentActivity {
     private ImageView btn_edit_profile_image;
 
     ///사진
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    private Uri fileUri;
-    public static final int MEDIA_TYPE_IMAGE = 1;
+    private static final String TEMP_FILE_NAME = "tempFile.jpg";
+
+    private Uri mTempImageUri;
+
+    ///사진
+    private static final int PICK_FROM_CAMERA = 100;
+    private static final int PICK_FROM_ALBUM = 200;
+    private static final int CROP_FROM_CAMERA = 300;
     private Bitmap photo;
     //사진
 
@@ -56,8 +68,12 @@ public class My_Profile extends FragmentActivity {
     private TextView Tv_name;
     private TextView Tv_phonenumber;
     private TextView Tv_selfintro;
-    private TextView Tv_sns;
+    private EditText Tv_sns1;
+    private EditText Tv_sns2;
+    private EditText Tv_sns3;
     private ArrayList<Bitmap> mData;
+    private ScrollView Sv;
+    private ImageView btn_keyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,257 +81,103 @@ public class My_Profile extends FragmentActivity {
         setContentView(R.layout.my_profile);
         init();
 
+        //Editview 외에 다른 곳을 터치하면 키보드가 내려가도록 구현.
+        setupUI(Sv);
 
-
+        // ActionBar의 배경색 변경
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xFF01afff));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         my_profile_image.setOnClickListener(new ImageView.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent newActivity = new Intent(My_Profile.this, My_Profile_Image.class);
+                if (photo != null) {
+                    Log.d("photo : ", photo.toString());
+                    newActivity.putExtra("bm", photo);
+                    newActivity.putExtra("BitmapList", mData);
+                    newActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-//                Log.d("photo : ", photo.toString());
-                newActivity.putExtra("bm", photo);
-                newActivity.putExtra("BitmapList", mData);
-                newActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
+                    startActivity(newActivity);
+                }
+            }
+        });
+        btn_keyword.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newActivity = new Intent(My_Profile.this, Add_Keyword.class);
                 startActivity(newActivity);
             }
+
         });
 
-        btn_back.setOnClickListener(new ImageView.OnClickListener() {
+        Tv_name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                finish();
             }
         });
-        btn_edit_complete.setOnClickListener(new ImageView.OnClickListener() {
+        Tv_phonenumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent newActivity = new Intent(My_Profile.this, MainActivity.class);
-                //여기서 프로필을 추가해줘야 한다.
-                //Log.d("photo : ", photo.toString());
-                newActivity.putExtra("bm", photo);
-
-                newActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                startActivity(newActivity);
-
-                //finish();
             }
         });
-        btn_edit_profile_image.setOnClickListener(new ImageView.OnClickListener() {
+        Tv_selfintro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 카메라와 앨범 중 택하기
-                openOptionsMenu();
-                // 사진폴더이동
-                // 카메라 호출
 
             }
         });
-
-        Iv_name.setOnClickListener(new ImageView.OnClickListener(){
+        Tv_sns1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Edit_Infomation(0);
 
+//
             }
         });
-        Iv_phonenumber.setOnClickListener(new ImageView.OnClickListener(){
+        Tv_sns2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Edit_Infomation(1);
 
+//
             }
         });
-        Iv_selfintro.setOnClickListener(new ImageView.OnClickListener(){
+        Tv_sns3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Edit_Infomation(2);
 
+//
             }
         });
-        Iv_sns.setOnClickListener(new ImageView.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Edit_Infomation(3);
-
-            }
-        });
-
 
     }
+
     //레이아웃 설정
     private void init() {
-        my_profile_image = (ImageView) findViewById(R.id.my_profile_image);
-        btn_back = (ImageView) findViewById(R.id.back);
-        btn_edit_complete = (ImageView) findViewById(R.id.edit_complete);
-        btn_edit_profile_image = (ImageView) findViewById(R.id.edit_profile_image);
+        my_profile_image = (ImageView) findViewById(R.id.myprofile_my_profile_image);
+        btn_edit_profile_image = (ImageView) findViewById(R.id.myprofile_edit_profile_image);
+        btn_edit_profile_image.setOnClickListener(this);
         mData = new ArrayList<Bitmap>();
-        Tv_name = (TextView) findViewById(R.id.textview_name);
-        Tv_phonenumber = (TextView) findViewById(R.id.textview_phonenumber);
-        Tv_selfintro = (TextView) findViewById(R.id.textview_selfintro);
-        Tv_sns = (TextView) findViewById(R.id.textview_sns);
-        Iv_name = (ImageView) findViewById(R.id.btn_edit_name);
-        Iv_phonenumber = (ImageView) findViewById(R.id.btn_edit_phonenumber);
-        Iv_selfintro = (ImageView) findViewById(R.id.btn_edit_selfintro);
-        Iv_sns = (ImageView) findViewById(R.id.btn_edit_sns);
+        Tv_name = (EditText) findViewById(R.id.myprofile_textview_name);
+        Tv_phonenumber = (EditText) findViewById(R.id.myprofile_textview_phonenumber);
+        Tv_selfintro = (EditText) findViewById(R.id.myprofile_textview_selfintro);
+        Tv_sns1 = (EditText) findViewById(R.id.myprofile_textview_sns1);
+        Tv_sns2 = (EditText) findViewById(R.id.myprofile_textview_sns2);
+        Tv_sns3 = (EditText) findViewById(R.id.myprofile_textview_sns3);
 
+        btn_keyword = (ImageView) findViewById(R.id.myprofile_setting_interests);
+
+        Sv = (ScrollView) findViewById(R.id.my_profile_Sv);
+
+//        keyword_1 = (TextView) findViewById(R.id.keyword1);
+//        keyword_2 = (TextView) findViewById(R.id.keyword2);
+//        keyword_3 = (TextView) findViewById(R.id.keyword3);
+//        keyword_4 = (TextView) findViewById(R.id.keyword4);
+//        keyword_5 = (TextView) findViewById(R.id.keyword5);
     }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        menu.add("카메라" );
-        menu.add("앨범");
-
-        return true;
-    }
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-
-        if ("카메라" == item.getTitle()) {
-            Toast.makeText(this, "카메라 구현 예정입니다.", Toast.LENGTH_SHORT).show();
-            // 사진 촬영할때.
-
-
-            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
-
-
-            fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE); // create a file to save the image
-
-          //  intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
-/*위코드에서 특이사항은  사진을 찍으려고 카메라를 호출했을때
-
-onActivityResult에서 data 값이 null이 리턴되는것이었다.
-
-
-
- 몇시간 동안 뻘짓과 웹서핑 결과
-
-위 코드를 사용(EXTRA_OUTPUT 설정)하면 해당 경로에 이미지가 저장되므로
-
-굳이 리턴할 필요가 없다고 받아 드리는 수 밖에 없는듯하다.
-
- 그래서 ' intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);' 부분을
-
- 주석처리하면 data 값이 정상적으로 넘어온다.
-
-*/
-
-
-            // start the image capture Intent
-
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-
-
-
-        }
-        else if ("설정" == item.getTitle()) {
-            Toast.makeText(this, "앨범 구현 예정입니다.", Toast.LENGTH_SHORT).show();
-        }
-
-        return true;
-    }
-
-    /**
-     * OptionMenu가 강제로 Open될 때 호출 된다.
-     */
-    @Override
-    public void openOptionsMenu() {
-
-        super.openOptionsMenu();
-    }
-
-    /**
-     * OptionMenu가 강제로 Close될 때 호출 된다.
-     */
-    @Override
-    public void closeOptionsMenu() {
-        Toast.makeText(My_Profile.this, "OptionMenu 강제 종료",
-                Toast.LENGTH_SHORT).show();
-        super.closeOptionsMenu();
-
-    }
-
-
-    /** Create a file Uri for saving an image or video */
-
-    private static Uri getOutputMediaFileUri(int type){
-
-        return Uri.fromFile(getOutputMediaFile(type));
-
-    }
-
-    /** Create a File for saving an image or video */
-
-    private static File getOutputMediaFile(int type){
-
-        // To be safe, you should check that the SDCard is mounted
-
-        // using Environment.getExternalStorageState() before doing this.
-
-
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
-
-        // This location works best if you want the created images to be shared
-
-        // between applications and persist after your app has been uninstalled.
-
-
-
-        // Create the storage directory if it does not exist
-
-        if (! mediaStorageDir.exists()){
-
-            if (! mediaStorageDir.mkdirs()){
-
-                Log.d("MyCameraApp", "failed to create directory");
-
-                return null;
-
-            }
-
-        }
-
-
-
-        // Create a media file name
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-        File mediaFile;
-
-        if (type == MEDIA_TYPE_IMAGE){
-
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-
-                    "IMG_"+ timeStamp + ".jpg");
-
-        }  else {
-
-            return null;
-
-        }
-
-
-
-        return mediaFile;
-
-    }
-
 
     @Override
 
@@ -323,131 +185,183 @@ onActivityResult에서 data 값이 null이 리턴되는것이었다.
 
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if(resultCode != RESULT_OK)
+        {
+            return;
+        }
 
-            if (resultCode == RESULT_OK) {
+        switch(requestCode)
+        {
+            case CROP_FROM_CAMERA:
+            {
+                // 크롭이 된 이후의 이미지를 넘겨 받습니다.
+                // 이미지뷰에 이미지를 보여준다거나 부가적인 작업 이후에
+                // 임시 파일을 삭제합니다.
+                final Bundle extras = data.getExtras();
 
-                Log.e("com", "result_ok");
-
-                Bundle extras = data.getExtras();
-
-                // Image captured and saved to fileUri specified in the Intent
-
-                if(data != null){
+                if(extras != null)
+                {
                     photo = extras.getParcelable("data");
                     my_profile_image.setImageBitmap(photo);
-
+                    Log.d("Photo 값 : ", photo.toString());
                     mData.add(0,photo);
-                    //사진넘기
-                    //Toast.makeText(this, "Image saved to:\n" + data.getData(), Toast.LENGTH_LONG).show();
-
-                }else{
-
-                    Log.e("onActivityResult",fileUri.getPath());
 
                 }
 
+                // 임시 파일 삭제
+                File f = new File(mTempImageUri.getPath());
+                if(f.exists())
+                {
+                    f.delete();
+                }
 
-
-            } else if (resultCode == RESULT_CANCELED) {
-
-                Log.e("com","result_canceled");
-
-                // User cancelled the image capture
-
-            } else {
-
-
-                // Image capture failed, advise user
-
+                break;
             }
 
-        }
-        else
-        {
-            Log.d("이미지 넘기기 작업중","");
-        }
+            case PICK_FROM_ALBUM:
+            {
+                // 이후의 처리가 카메라와 같으므로 일단  break없이 진행합니다.
+                // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
 
-
-
-
-
-        }
-
-    public void Edit_Infomation(int id)
-    {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-        alert.setTitle("개인 정보 변경");
-        switch (id) {
-            case 0 :
-                alert.setMessage("이름 바꿔");
-                break;
-            case 1:
-                alert.setMessage("전화번호 바꿔");
-                break;
-            case 2:
-                alert.setMessage("자기소개 바꿔");
-                break;
-            case 3:
-                alert.setMessage("SNS주소 바꿔");
-                break;
-        }
-
-
-        final EditText name = new EditText(this);
-        alert.setView(name);
-
-        switch (id) {
-            case 0 :
-                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String username = name.getText().toString();
-                        Tv_name.setText(username);
-
-                    }
-                });
-                break;
-            case 1:
-                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String phonenumber = name.getText().toString();
-                        Tv_name.setText(phonenumber);
-
-                    }
-                });
-                break;
-            case 2:
-                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String selfintro = name.getText().toString();
-                        Tv_name.setText(selfintro);
-
-                    }
-                });
-                break;
-            case 3:
-                alert.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String sns = name.getText().toString();
-                        Tv_name.setText(sns);
-
-                    }
-                });
-                break;
-        }
-
-
-
-        alert.setNegativeButton("no",new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
+                mTempImageUri = data.getData();
             }
-        });
 
-        alert.show();
+            case PICK_FROM_CAMERA:
+            {
+                // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
+                // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
+
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(mTempImageUri, "image/*");
+
+                intent.putExtra("aspectX", 73);
+                intent.putExtra("aspectY", 50);
+                intent.putExtra("outputX", 365);
+                intent.putExtra("outputY", 250);
+                intent.putExtra("noFaceDetection",true);
+                intent.putExtra("scale", true);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, CROP_FROM_CAMERA);
+
+                break;
+            }
+        }
     }
 
+    /**
+     * 카메라에서 이미지 가져오기
+     */
+    private void doTakePhotoAction()
+    {
+    /*
+     * 참고 해볼곳
+     * http://2009.hfoss.org/Tutorial:Camera_and_Gallery_Demo
+     * http://stackoverflow.com/questions/1050297/how-to-get-the-url-of-the-captured-image
+     * http://www.damonkohler.com/2009/02/android-recipes.html
+     * http://www.firstclown.us/tag/android/
+     */
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // 임시로 사용할 파일의 경로를 생성
+        String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        mTempImageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+
+        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mTempImageUri);
+        // 특정기기에서 사진을 저장못하는 문제가 있어 다음을 주석처리 합니다.
+        //intent.putExtra("return-data", true);
+        startActivityForResult(intent, PICK_FROM_CAMERA);
+    }
+
+    /**
+     * 앨범에서 이미지 가져오기
+     */
+    private void doTakeAlbumAction()
+    {
+        // 앨범 호출
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent, PICK_FROM_ALBUM);
+    }
+    @Override
+    public void onClick(View v)
+    {
+        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                doTakePhotoAction();
+            }
+        };
+
+        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                doTakeAlbumAction();
+            }
+        };
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+
+                dialog.dismiss();
+            }
+        };
+
+        new AlertDialog.Builder(this)
+
+                .setTitle("업로드할 이미지 선택")
+                .setPositiveButton("취소", cancelListener)
+                .setNeutralButton("사진촬영", cameraListener)
+                .setNegativeButton("앨범선택", albumListener)
+
+
+
+
+                .show();
+    }
+
+    public boolean onSupportNavigateUp()
+    {
+        finish();
+
+        return super.onSupportNavigateUp();
+    }
+
+    //해당 view 객체를 넘기고 그안에 eidtText 걸르기,
+    public void setupUI(View view) {
+
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(!(v instanceof EditText))
+                    {
+//타 정보 보니 이것이 없어서.. 저는 따로 처리.
+                        //       2차방어..ㅇㅅㅇ 정도... 스크롤뷰안에 여러 입력폼이 있을 경우...
+                        hideSoftKeyboard();
+                    }
+                    return false;
+                }
+
+            });
+        }
+    }
+    public void hideSoftKeyboard() {
+
+
+        InputMethodManager inputMethodManager =
+                (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
 }
 
 

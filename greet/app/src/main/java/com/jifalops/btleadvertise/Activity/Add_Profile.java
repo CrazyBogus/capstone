@@ -32,44 +32,67 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jifalops.btleadvertise.Database.DbOpenHelper;
 import com.jifalops.btleadvertise.R;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
+import cz.msebera.android.httpclient.extras.Base64;
 
 /**
  * Created by client on 2016. 5. 14..
  */
 public class Add_Profile extends ActionBarActivity implements View.OnClickListener {
-    private ViewPager mViewPager;
-    private PagerAdapter mPagerAdapter;
+
     private ImageView my_profile_image;
-
     private ImageView btn_edit_profile_image;
-    private static final String TEMP_FILE_NAME = "tempFile.jpg";
-
+    private ImageView btn_keyword;
+    private ImageView img_video;
+    private TextView keyword_1;
+    private TextView keyword_2;
+    private TextView keyword_3;
+    private TextView keyword_4;
+    private TextView keyword_5;
     private Uri mTempImageUri;
-
-    ///사진
+    private Uri getImagePath;
     private static final int PICK_FROM_CAMERA = 100;
     private static final int PICK_FROM_ALBUM = 200;
     private static final int CROP_FROM_CAMERA = 300;
-    private Uri fileUri;
-    public static final int MEDIA_TYPE_IMAGE = 1;
     private Bitmap photo;
-    //사진
-
     private EditText Tv_name;
     private EditText Tv_phonenumber;
     private EditText Tv_selfintro;
-    private EditText Tv_sns;
-    private ImageView btn_keyword;
+    private EditText Tv_sns1;
+    private EditText Tv_sns2;
+    private EditText Tv_sns3;
+    private ArrayList<String> keyword;
     private ArrayList<Bitmap> mData;
     private ScrollView Sv;
+    private ViewPager mViewPager;
+    private PagerAdapter mPagerAdapter;
+    private Context mContext;
+    private DbOpenHelper mDbOpenHelper;
+    private static String kakaoID;
+    private byte[] temp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,28 +149,74 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
             }
         });
-        Tv_sns.setOnClickListener(new View.OnClickListener() {
+        Tv_sns1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 //
             }
         });
+        Tv_sns2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//
+            }
+        });
+        Tv_sns3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//
+            }
+        });
+        //키워드 받기
+        if(getIntent().hasExtra("keyword")) {
+            keyword = getIntent().getStringArrayListExtra("keyword");
+            keyword_1.setText(keyword.get(0));
+            keyword_2.setText(keyword.get(1));
+            keyword_3.setText(keyword.get(2));
+            keyword_4.setText(keyword.get(3));
+            keyword_5.setText(keyword.get(4));
+        }
+        //카카오 아이디받기
+        if(getIntent().hasExtra("kakaoID")) {
+            kakaoID = getIntent().getStringExtra("kakaoID");
+            Log.d("MainActivity: ", "카카오 정보 가져오기 성공!");
+        }
     }
     //레이아웃 설정
     private void init() {
         my_profile_image = (ImageView) findViewById(R.id.my_profile_image);
+        btn_keyword = (ImageView) findViewById(R.id.setting_interests);
         btn_edit_profile_image = (ImageView) findViewById(R.id.edit_profile_image);
         btn_edit_profile_image.setOnClickListener(this);
+        img_video = (ImageView) findViewById(R.id.image_video);
         mData = new ArrayList<Bitmap>();
         Tv_name = (EditText) findViewById(R.id.textview_name);
         Tv_phonenumber = (EditText) findViewById(R.id.textview_phonenumber);
         Tv_selfintro = (EditText) findViewById(R.id.textview_selfintro);
-        Tv_sns = (EditText) findViewById(R.id.textview_sns);
-
-        btn_keyword = (ImageView) findViewById(R.id.setting_interests);
+        Tv_sns1 = (EditText) findViewById(R.id.textview_sns1);
+        Tv_sns2 = (EditText) findViewById(R.id.textview_sns2);
+        Tv_sns3 = (EditText) findViewById(R.id.textview_sns3);
 
         Sv = (ScrollView) findViewById(R.id.add_profile);
+
+        keyword_1 = (TextView) findViewById(R.id.keyword1);
+        keyword_2 = (TextView) findViewById(R.id.keyword2);
+        keyword_3 = (TextView) findViewById(R.id.keyword3);
+        keyword_4 = (TextView) findViewById(R.id.keyword4);
+        keyword_5 = (TextView) findViewById(R.id.keyword5);
+
+        keyword_1.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_2.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_3.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_4.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_5.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        btn_keyword.setImageResource(R.drawable.my_profile_keyword_selected);
+        my_profile_image.setImageResource(R.drawable.my_profile_image_default);
+        btn_edit_profile_image.setImageResource(R.drawable.my_profile_edit_image);
+        img_video.setImageResource(R.drawable.my_profile_video_default);
     }
 
 
@@ -172,9 +241,71 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             Intent newActivity = new Intent(Add_Profile.this, MainActivity.class);
             //여기서 프로필을 추가해준다.
 
+
+            //이름과 사진은 필수로
+            if ( Tv_name.getText().toString().length() != 0 || photo != null) {
+                //비트맵 바이트로 변환
+                // 출력 스트림 생성, 압축, 바이트 어래이로 변환
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
+                int card_number = 1;
+                byte[] imageInByte = stream.toByteArray();
+                temp = imageInByte;
+                String nickname = Tv_name.getText().toString();
+                ArrayList<String> onoff = new ArrayList<String>();
+                onoff.add(0, "0");
+                onoff.add(1, "1");
+                onoff.add(2, "0");
+                onoff.add(3, "1");
+                onoff.add(4, "0");
+                String phonenumber = Tv_phonenumber.getText().toString();
+                if(Tv_phonenumber.getText().toString().length() == 0) phonenumber = "000-0000-0000";
+                ArrayList<String> sns = new ArrayList<String>();
+                sns.add(0,Tv_sns1.getText().toString());
+                sns.add(1,Tv_sns2.getText().toString());
+                sns.add(2,Tv_sns3.getText().toString());
+                if(Tv_sns1.getText().toString().length() == 0){
+                    sns.remove(0);
+                    sns.add(0, "http://www.naver.com");
+                }
+                if(Tv_sns2.getText().toString().length() == 0){
+                    sns.remove(1);
+                    sns.add(1, "http://www.google.com");
+                }
+                if(Tv_sns3.getText().toString().length() == 0){
+                    sns.remove(2);
+                    sns.add(2, "http://www.facebook.com");
+                }
+                String status = Tv_selfintro.getText().toString();
+                if(Tv_selfintro.getText().toString().length() == 0) status = "자기소개가 없습니다";
+                // DB 열기
+                mDbOpenHelper = new DbOpenHelper(this);
+                mDbOpenHelper.open();
+
+//                mDbOpenHelper.my_profile_insert(keyword,imageInByte, nickname, onoff, phonenumber, sns,status);
+  //              Log.d("In Add_profile : ", "성공적으로 DB input");
+    //            mDbOpenHelper.select();
+                serverConnect(5, nickname, phonenumber,keyword,sns,onoff,status,2);
+                //card_number++;
+                //json :{	id,
+//                card_number
+//            nickname
+//                    phone_number
+//            keyword (배열, 각키워드앞에 #이 붙음)
+//            sns_list  (배열)
+//            on_off (size 5개배열 0: card 1 :phone_number 2: status_message 3: sns 4: video )
+//            status_message
+//            image_size (유저가 5개 올릴 경우 main까지 6을 보내주셔야되요)
+//        }
+//
+
+                // ArrayList<String> keyword, String image, String nickname, String onoff, String phonenumber, ArrayList<String> sns, String status)
+
+            }
             if(photo != null) {
                 newActivity.putExtra("bm", photo);
-
+                newActivity.putStringArrayListExtra("keyword", keyword);
                 newActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 startActivity(newActivity);
@@ -182,8 +313,8 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             else
             {
                     new AlertDialog.Builder(this)
-                        .setTitle("사진을 등록해주세요")
-                        .setMessage("사진 등록은 필수입니다")
+                        .setTitle("기본 정보 부족")
+                        .setMessage("사진과 이름 등록은 필수입니다")
                         .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -193,6 +324,9 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                         .show();
             }
 
+
+            my_profile_image.setImageDrawable(null);
+            btn_keyword.setImageDrawable(null);
         }
 
         return super.onOptionsItemSelected(item);
@@ -243,12 +377,17 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                     photo = extras.getParcelable("data");
                     my_profile_image.setImageBitmap(photo);
                     Log.d("Photo 값 : ", photo.toString());
-                    mData.add(0,photo);
+                    mData.add(photo);
+
 
                 }
 
+                getImagePath = mTempImageUri;
+
                 // 임시 파일 삭제
+
                 File f = new File(mTempImageUri.getPath());
+
                 if(f.exists())
                 {
                     f.delete();
@@ -263,6 +402,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
 
                 mTempImageUri = data.getData();
+
             }
 
             case PICK_FROM_CAMERA:
@@ -272,7 +412,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(mTempImageUri, "image/*");
-
+              //  intent.setDataAndType(getImagePath, "image/*");
                 intent.putExtra("aspectX", 73);
                 intent.putExtra("aspectY", 50);
                 intent.putExtra("outputX", 365);
@@ -401,6 +541,170 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         InputMethodManager inputMethodManager =
                 (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
+
+
+//    //인텐트 받아왔을 때.. 근데 이거 있으면 onStart 호출 불가
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//        setIntent(intent);
+//
+//
+//
+//
+//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        keyword_1.setBackground(null);
+        keyword_2.setBackground(null);
+        keyword_3.setBackground(null);
+        keyword_4.setBackground(null);
+        keyword_5.setBackground(null);
+        btn_keyword.setImageDrawable(null);
+        my_profile_image.setImageDrawable(null);
+        img_video.setImageDrawable(null);
+        btn_edit_profile_image.setImageDrawable(null);
+
+    }
+
+    public void serverConnect(int card_number, String nickname, String phonenumber, ArrayList<String> keyword, ArrayList<String> sns, ArrayList<String> onoff, String status, int image_size)
+    {
+
+
+        Log.d("In serverconnect : ", "here");
+        String url = "http://52.69.46.152:8001/api/upload_card";
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams param2 = new RequestParams();
+        final String contentType = RequestParams.APPLICATION_OCTET_STREAM;
+
+        param2.setForceMultipartEntityContentType(true);
+
+
+        File file1 = new File(getPath(getImagePath));
+
+        file1.renameTo(file1);
+
+
+        Log.d("file name : ", file1.getName());
+        //File file2 = new File(getPath(getImagePath),"1.jpg");
+        //file1.renameTo(file2);
+        client.addHeader("Accept", "*/*");
+       // client.addHeader("FileName",      "android"+System.currentTimeMillis()+".jpg");
+       // client.addHeader("Content-Type", "multipart/form-data; boundary=hihi");
+
+
+
+        client.setMaxRetriesAndTimeout(3, 30000);
+        client.setUserAgent("android-async-http-1.4.9");
+//        MultipartEntityBuilder entity = MultipartEntityBuilder.create();
+//        for (BasicNameValuePair nameValuePair : nameValuePairs) {
+//            entity.addTextBody(nameValuePair.getName(), nameValuePair.getValue());
+//        }
+//        Log.d("FilePath : ", getImagePath.getPath());
+
+
+//        Log.d("File Info : ", file.getName());
+           Log.d("File Info : ", file1.getPath());
+
+        if(kakaoID==null) kakaoID="123455";
+
+
+
+        Log.d("Temp Info : ", temp.toString() + " " +Integer.toString(temp.length));
+        try {
+
+
+            param2.put("id", kakaoID);
+            param2.put("card_number",card_number);
+            param2.put("nickname",nickname);
+            param2.put("phone_number",phonenumber);
+            param2.put("pic2", file1.getName());
+            param2.put("keyword",keyword);
+            param2.put("sns_list",sns);
+            param2.put("on_off",onoff);
+            param2.put("status_message",status);
+            param2.put("image_size",image_size);
+            param2.put("test", temp.length);
+            param2.put("test", temp);
+            param2.put("files",photo);
+
+           // param2.put("pic", file1.getPath());
+            param2.put("pic", file1.getPath());
+            param2.put("pic", file1);
+
+          //  param2.put("files", file2);
+      //      param2.put("picture", file);
+
+        } catch(Exception e) {e.printStackTrace();}
+    //    param2.setHttpEntityIsRepeatable(true);
+    //    param2.setUseJsonStreamer(false);
+//           param2.put("picture", temp);
+
+
+     //   Log.d("In Param2 info : ", "file name is : " +file.getName());
+//        json :{	id,
+//                card_number
+//            nickname
+//                    phone_number
+//            keyword (배열, 각키워드앞에 #이 붙음)
+//            sns_list  (배열)
+//            on_off (size 5개배열 0: card 1 :phone_number 2: status_message 3: sns 4: video )
+//            status_message
+//            image_size (유저가 5개 올릴 경우 main까지 6을 보내주셔야되요)
+//        }
+//
+
+
+//        files (filename : picture , filename : 0.jpg
+//        1.jpg
+//        main.jpg)   //사진 인덱스는 사진 이름에 넣어서 보내주시고, 사람이 다섯개를 올리면  5개  0.jpg~4.jpg 보내주시고 그중  프로필	     //사진을 main.jpg로 다시 보내주셔야되요
+
+        Log.d("In serverconnect : ", "here11");
+        client.post(mContext, url, param2, new JsonHttpResponseHandler() {
+
+            //
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                // Handle resulting parsed JSON response here
+                Log.d("In Add_Profile : ", response.toString());
+                try {
+
+                    final boolean connect_result = response.getBoolean("take");
+
+
+
+
+
+                } catch (JSONException e) {
+
+                }
+//
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                Log.d("In Add_Profile : ", "Connection Failed");
+            }
+
+        });
+
+
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        startManagingCursor(cursor);
+        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(columnIndex);
     }
 }
 

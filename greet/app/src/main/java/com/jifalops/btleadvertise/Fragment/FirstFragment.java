@@ -18,15 +18,19 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.ParcelUuid;
 import android.support.v4.app.Fragment;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jifalops.btleadvertise.Activity.See_Other;
 import com.jifalops.btleadvertise.Adapters.UserInfoAdapter;
 import com.jifalops.btleadvertise.Functional.My_Info;
 import com.jifalops.btleadvertise.Functional.User_Info;
@@ -55,45 +59,44 @@ import cz.msebera.android.httpclient.extras.Base64;
 public class FirstFragment extends Fragment {
     // Store instance variables
 
-    private static final int REQUEST_ENABLE_BT = 1;
+
     private BluetoothManager btManager;
     private BluetoothAdapter btAdapter;
     private TextView textView;
     private List<ScanFilter> filters;
     Context mContext;
-    ParcelUuid App_UUID = new ParcelUuid(UUID.fromString("20112017-0000-1000-8000-00805f9b34fb"));
+    ParcelUuid App_UUID = new ParcelUuid(UUID.fromString("20112018-0000-1000-8000-00805f9b34fb"));
     /* 유저리스트뷰 설정 */
 
     private ListView userList;
     private UserInfoAdapter adapter;
     private User_List user_list = new User_List();
-    private My_Info my_info;
-    private String copy_device_name;
-    private Timer mTimer;
-    private TimerTask mTask;
+    private User_Info User1 = new User_Info();
     // 리스트 아이템 데이터를 저장할 배열
     private ArrayList<User_Info> User_Data;
-    private User_Info User1 = new User_Info();
-    private int use_bit = 30;
-    private static String kakaoid=null;
 
+
+    private int use_bit = 30;
+    private int value=0;
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static String kakaoid=null;
+    private String copy_device_name;
+    private ArrayList<String> keyword;
     private boolean flag_Timer;
-    int value=0;
-    TextView mText;
-    TextView mText1;
-    CountDownTimer timer1;
+
+    private CountDownTimer timer1;
+
+    private ImageView Iv_random;
+    private ImageView Iv_interest;
+    private boolean flag_search = true;
+
+
     // newInstance constructor for creating fragment with arguments
     public static FirstFragment newInstance(int page, String title) {
         FirstFragment fragmentFirst = new FirstFragment();
-        Bundle args = new Bundle();
-
         //고유값을 위해 kakaoId 가져오기
         if(title != null)
         kakaoid = title;
-
-        args.putInt("someInt", page);
-        args.putString("someTitle", title);
-        fragmentFirst.setArguments(args);
 
         return fragmentFirst;
     }
@@ -106,10 +109,7 @@ public class FirstFragment extends Fragment {
         btManager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
         // Adapter 생성
         adapter = new UserInfoAdapter(getActivity());
-
         flag_Timer = true;
-
-
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -120,6 +120,62 @@ public class FirstFragment extends Fragment {
         userList = (ListView) view.findViewById(R.id.user_list);
         userList.setAdapter(adapter);
         userList.setDivider(null);
+        userList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                // 보낼 데이터 생성
+                String name = "asdasd";
+                // 화면전환하는 객체 선언
+                Intent intent = new Intent().setClass(getActivity(), See_Other.class);
+                // 데이터 넘김
+                intent.putExtra("name", name);
+                // 화면 전환 메소드
+                startActivity(intent);
+            }
+        });
+
+
+        Iv_interest = (ImageView) view.findViewById(R.id.Iv_interest);
+        Iv_random = (ImageView) view.findViewById(R.id.Iv_random);
+        Iv_interest.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Toast.makeText(getActivity(), "Clicked Interest", Toast.LENGTH_SHORT).show();
+                Iv_random.setImageResource(R.drawable.near_random2);
+                Iv_interest.setImageResource(R.drawable.near_interests2);
+
+
+                Bundle extra = getArguments();
+                if(extra != null) {
+                    keyword = extra.getStringArrayList("keyword");
+                    Log.d("keyword : ", "1 : " + keyword.get(0) + " 2 : " + keyword.get(1));
+                }
+                flag_search = true;
+            }
+        });
+        Iv_random.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Toast.makeText(getActivity(), "Clicked Random", Toast.LENGTH_SHORT).show();
+                Iv_random.setImageResource(R.drawable.near_random);
+                Iv_interest.setImageResource(R.drawable.near_interests);
+                flag_search = false;
+            }
+        });
+
+
+//        Bundle extra = getArguments();
+
+
+
+//
+//        keyword = extra.getStringArrayList("keyword");
+//        Log.d("Keyword Information : ", keyword.get(0)+" "+ keyword.get(1) + " " + keyword.get(2)+ " " + keyword.get(3)+ " " + keyword.get(4));
+
       //  mText=(TextView) view.findViewById(R.id.text);
       //  mText1=(TextView) view.findViewById(R.id.text1);
       //  mText.setText("asdasdasdasd");
@@ -142,7 +198,6 @@ public class FirstFragment extends Fragment {
         if (getActivity().isFinishing()) {
             return;
         }
-
         //유저 객체 생성
         User1 = new User_Info();
 
@@ -203,8 +258,6 @@ public class FirstFragment extends Fragment {
                         User1.Setuse_bit(use_bit);
                         User1.Getuse_bit();
 
-                        mText.setText("usebit : " + User1.Getuse_bit());
-                        mText1.setText("value : " + value);
                         if (User1.Getuse_bit() == 0 || User1.Getuse_bit() == -1) {
                             user_list.remove_user(copy_device_name);
                             adapter.remove(User1);
@@ -234,8 +287,6 @@ public class FirstFragment extends Fragment {
             btAdapter.getBluetoothLeAdvertiser().stopAdvertising(adCallback);
             btAdapter.getBluetoothLeScanner().stopScan(scanCallback);
             btAdapter.getBluetoothLeScanner().flushPendingScanResults(scanCallback);
-
-
 
     }
 
@@ -277,101 +328,16 @@ public class FirstFragment extends Fragment {
 
            //    Log.d("scan results 결과 : ", results.toString());
             for (int i = 0; i < results.size(); i++) {
-
-
                 result = results.get(i);
                 device_name = result.getScanRecord().getDeviceName();
-
-
-
-                //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
-                if (user_list.check_exist(device_name)==2) {
-                    Log.d("user name : ", device_name);
-                     Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
-
-                    //HTTP 통신
-                    String url = "http://52.69.46.152:8001/api/find_members/random";
-                    AsyncHttpClient client = new AsyncHttpClient();
-                    RequestParams param2 = new RequestParams();
-
-                    client.addHeader("Accept", "text/json");
-                    client.setMaxRetriesAndTimeout(3, 30000);
-                    client.setUserAgent("android-async-http-1.4.9");
-
-
-                    param2.put("id", device_name);
-                    copy_device_name = device_name;
-
-                    client.post(mContext, url, param2, new JsonHttpResponseHandler() {
-
-                        //
-
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                            // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                            // Handle resulting parsed JSON response here
-                            Log.d("온석세스 안에서 : ", response.toString());
-                            try {
-
-                                final String name = response.getString("nickname");
-                                final String image_str = response.getString("profile_picture");
-                                byte[] bytePlainOrg = Base64.decode(image_str, 0);
-                                //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
-                                ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
-                                final Bitmap bm = BitmapFactory.decodeStream(inStream);
-
-
-                                //어뎁터에 유저 객체 넣기
-                                adapter.add(User1);
-                                //객체에 이미지 넣기
-                                User1.SetImage(bm);
-                                User1.GetImage();
-                                //객체에 아이디 넣기
-                                User1.SetId(name);
-                                User1.GetId();
-                                User1.Setuse_bit(40);
-                                User1.Getuse_bit();
-
-
-                            } catch (JSONException e) {
-
-                            }
-//
-
-
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
-                            // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                            Log.d("온페일류어 안에서 : ", "123");
-                        }
-
-                    });
-
-
-                } //데이터 추가 끝
-
-                //데이터 존재하면
-                else if((user_list.check_exist(device_name)) == 1){
-                    Log.d("여기 들어오나","aaaaa");
-                    User1.Setuse_bit(50);
-                    User1.Getuse_bit();
-                    Log.d("GetUse_bit : ", Integer.toString(User1.Getuse_bit()));
-                    //Log.d("여기 들어오나","bbbbb");
+                if(flag_search) {
+                    Log.d("관심사 별 검색 시작", "시작!");
+                    serverConnect_interest(device_name, keyword);
                 }
-                //데이터가 아예 없어
-                else if((user_list.check_exist(device_name)) == 3)
-                {
-                    Log.d("아무것도 안해","aaaaa");
+                else if(!flag_search) {
+                    Log.d("무작위 검색 시작", "시작!");
+                    serverConnect_random(device_name);
                 }
-                else
-                {
-                    Log.d("미쳤네미쳤어","aaaa");
-                }
-
-                adapter.notifyDataSetChanged();
             }
 
 
@@ -387,21 +353,176 @@ public class FirstFragment extends Fragment {
 
     };
 
-//    Handler handler = new Handler() {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            Log.d("흠.... ", "");
-//            Log.d("흠.... ", "");
-//            Log.d("흠.... ", "");
-//            Log.d("흠.... ", "");
-//            updateThread();
-//        }
-//    };
-//    private void updateThread() {
-//        Log.d("timer안으로 들어왔","");
-//        //전체 리스트 중에서 얘가 있는지를 봐야 돼 없으면 여기서 깍아줘
-//        //만약 유저리스트에 얘가 존재하지 않는다면 유즈비트를 깎아준
+    public void serverConnect_random(String device_name)
+    {
+
+        Log.d("In SC_Random : ", "Success");
+        //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
+        if (user_list.check_exist(device_name)==2) {
+            Log.d("user name : ", device_name);
+            Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
+
+            //HTTP 통신
+            String url = "http://52.69.46.152:8001/api/find_members/random";
+            AsyncHttpClient client = new AsyncHttpClient();
+            RequestParams param2 = new RequestParams();
+
+            client.addHeader("Accept", "text/json");
+            client.setMaxRetriesAndTimeout(3, 30000);
+            client.setUserAgent("android-async-http-1.4.9");
+
+
+            param2.put("id", device_name);
+            copy_device_name = device_name;
+
+            client.post(mContext, url, param2, new JsonHttpResponseHandler() {
+
+                //
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                    // Root JSON in response is an dictionary i.e { "data : [ ... ] }
+                    // Handle resulting parsed JSON response here
+                    Log.d("온석세스 안에서 : ", response.toString());
+                    try {
+
+                        final String name = response.getString("nickname");
+                        final String image_str = response.getString("profile_picture");
+                        byte[] bytePlainOrg = Base64.decode(image_str, 0);
+                        //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
+                        ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
+                        final Bitmap bm = BitmapFactory.decodeStream(inStream);
+
+
+                        //어뎁터에 유저 객체 넣기
+                        adapter.add(User1);
+                        //객체에 이미지 넣기
+                        User1.SetImage(bm);
+                        User1.GetImage();
+                        //객체에 아이디 넣기
+                        User1.SetId(name);
+                        User1.GetId();
+                        User1.Setuse_bit(40);
+                        User1.Getuse_bit();
+
+
+                    } catch (JSONException e) {
+
+                    }
 //
-//    }
+
+
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                    // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                    Log.d("온페일류어 안에서 : ", "123");
+                }
+
+            });
+
+
+        } //데이터 추가 끝
+
+        //데이터 존재하면
+        else if((user_list.check_exist(device_name)) == 1){
+            Log.d("여기 들어오나","aaaaa");
+            User1.Setuse_bit(50);
+            User1.Getuse_bit();
+            Log.d("GetUse_bit : ", Integer.toString(User1.Getuse_bit()));
+            //Log.d("여기 들어오나","bbbbb");
+        }
+        //데이터가 아예 없어
+        else if((user_list.check_exist(device_name)) == 3)
+        {
+            Log.d("아무것도 안해","aaaaa");
+        }
+        else
+        {
+            Log.d("미쳤네미쳤어","aaaa");
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    public void serverConnect_interest(String device_name, ArrayList<String> keyword)
+    {
+        Log.d("In SC_Random : ", "Success");
+        //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
+        if (user_list.check_exist(device_name)==2) {
+            Log.d("user name : ", device_name);
+            Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
+
+            //HTTP 통신
+            String url = "http://52.69.46.152:8001/api/find_members/random";
+            AsyncHttpClient client = new AsyncHttpClient();
+            RequestParams param2 = new RequestParams();
+
+            client.addHeader("Accept", "text/json");
+            client.setMaxRetriesAndTimeout(3, 30000);
+            client.setUserAgent("android-async-http-1.4.9");
+
+
+            param2.put("keyword", keyword);
+            param2.put("id", device_name);
+            copy_device_name = device_name;
+
+            client.post(mContext, url, param2, new JsonHttpResponseHandler() {
+
+                //
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                    try {
+
+                       String a = response.getString("nickname");
+
+
+                    } catch (JSONException e) {
+
+                    }
+//
+
+
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                    // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                    Log.d("온페일류어 안에서 : ", "123");
+                }
+
+            });
+
+
+        } //데이터 추가 끝
+
+        //데이터 존재하면
+        else if((user_list.check_exist(device_name)) == 1){
+            Log.d("여기 들어오나","aaaaa");
+            User1.Setuse_bit(50);
+            User1.Getuse_bit();
+            Log.d("GetUse_bit : ", Integer.toString(User1.Getuse_bit()));
+            //Log.d("여기 들어오나","bbbbb");
+        }
+        //데이터가 아예 없어
+        else if((user_list.check_exist(device_name)) == 3)
+        {
+            Log.d("아무것도 안해","aaaaa");
+        }
+        else
+        {
+            Log.d("미쳤네미쳤어","aaaa");
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+
+
+
 }
 

@@ -115,7 +115,9 @@ public class MyCardAdapter extends BaseAdapter {
 
     public void removeItem(Bitmap icon)
     {
-        listViewItemList.remove(icon);
+        MyCardListViewItem item = new MyCardListViewItem();
+
+        listViewItemList.remove(item);
     }
 
 

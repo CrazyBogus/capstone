@@ -1,16 +1,20 @@
 package com.jifalops.btleadvertise.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jifalops.btleadvertise.Activity.See_Other;
 import com.jifalops.btleadvertise.R;
 import com.jifalops.btleadvertise.Functional.User_Info;
 
@@ -118,7 +122,7 @@ public class UserInfoAdapter extends BaseAdapter implements View.OnClickListener
 
 
         }
-        // 완성된 아이템 뷰를 반환합니다.
+
         return v;
     }
 
@@ -143,6 +147,9 @@ public class UserInfoAdapter extends BaseAdapter implements View.OnClickListener
 
         // Tag를 이용하여 Data를 가져옵니다.
         User_Info clickItem = (User_Info) v.getTag();
+
+        Toast.makeText(mContext,"UserList Click", Toast.LENGTH_SHORT).show();
+
 
 
 

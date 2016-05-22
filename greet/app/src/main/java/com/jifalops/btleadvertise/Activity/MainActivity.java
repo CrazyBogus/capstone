@@ -1,6 +1,7 @@
 package com.jifalops.btleadvertise.Activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -13,11 +14,17 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.jifalops.btleadvertise.Adapters.MainAdapter;
+import com.jifalops.btleadvertise.Database.DbOpenHelper;
+import com.jifalops.btleadvertise.Fragment.FirstFragment;
 import com.jifalops.btleadvertise.Functional.Splash;
 import com.jifalops.btleadvertise.R;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private DbOpenHelper mDbOpenHelper;
 
     private MainAdapter adapterViewPager;
     private ViewPager vpPager;
@@ -27,7 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_four;
     private LinearLayout layout_actionbar;
     private ImageView add_new_card;
+    private ImageView add_interests;
+    private ImageView logo;
     private static String kakaoID;
+    private static String kakaoNICKNAME;
 
     private static boolean start_flag = true;
 
@@ -36,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private ImageView test_img;
 
+
+    ArrayList<String> keyword = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +58,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             finish();
         }
 
+
+
 //        Log.d("bm : ", bm.toString());
 
         setLayout();
-        vpPager = (ViewPager) findViewById(R.id.vpPager);
 
+
+
+        vpPager = (ViewPager) findViewById(R.id.vpPager);
 
 
 //        Log.d("bmbmbm : ", bm.toString());
@@ -72,6 +88,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("MainActivity : ", "has extra bm");
             vpPager.setCurrentItem(1);
         }
+
+
+        Intent intent = getIntent();
+
+        if(intent.hasExtra("kakaoID")) {
+            Log.d("MainActivity: ", "카카오 정보 가져오기 시도..");
+            kakaoID = intent.getStringExtra("kakaoID");
+            kakaoNICKNAME = intent.getStringExtra("kakaoNICKNAME");
+//            kakaoID = intent.getExtras().getString("kakaoID");
+//            kakaoNICKNAME = intent.getExtras().getString("kakaoNICKNAME");
+            Log.d("MainActivity: ", "카카오 정보 가져오기 성공!");
+        }
+        else
+        {
+            Log.d("MainActivity : ","intent가 kakaoID를 가지고 있지 않습니다.");
+        }
         // Attach the page change listener inside the activity
         vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -92,19 +124,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
                     btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.INVISIBLE);
+                    add_interests.setVisibility(View.VISIBLE);
                 } else if (position == 1) {
                     btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
                     btn_two.setBackgroundResource(R.drawable.actionbar_selected_interest);
                     btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
                     btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.VISIBLE);
+                    add_interests.setVisibility(View.INVISIBLE);
                 } else if (position == 2) {
                     btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
                     btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
                     btn_three.setBackgroundResource(R.drawable.actionbar_selected_editcard);
                     btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
-
-
+                    add_new_card.setVisibility(View.INVISIBLE);
+                    add_interests.setVisibility(View.INVISIBLE);
 
                 } else {
                     btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
@@ -112,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
                     btn_four.setBackgroundResource(R.drawable.actionbar_selected_option);
                     add_new_card.setVisibility(View.INVISIBLE);
+                    add_interests.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -127,15 +162,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 Intent newActivity = new Intent(MainActivity.this, Add_Profile.class);
-
+                newActivity.putExtra("kakaoID", kakaoID);
+                newActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(newActivity);
+
             }
         });
 
+        add_interests.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newActivity = new Intent(MainActivity.this, Pick_Interests.class);
+                startActivity(newActivity);
 
+            }
+        });
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+        //      // DB Create and Open
+//        mDbOpenHelper = new DbOpenHelper(this);
+//
+//        mDbOpenHelper.open();
+//        if(kakaoID != null && kakaoNICKNAME != null)
+//        mDbOpenHelper.my_info_insert(kakaoID,kakaoNICKNAME);
+//
+//        else
+//            Log.d("MainActivity : ", "kakaoInfos are null");
+
+    }
     /**
      * Layout
      */
@@ -153,6 +213,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        // layout_actionbar = (LinearLayout) findViewById(R.id.layout_actionbar);
        // layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
         add_new_card = (ImageView) findViewById(R.id.add_new_card);
+        add_interests = (ImageView) findViewById(R.id.add_interests);
+        logo = (ImageView) findViewById(R.id.logo);
+        add_new_card.setImageResource(R.drawable.my_profile_add_new_card);
+        add_interests.setImageResource(R.drawable.my_profile_keyword_selection);
+        logo.setImageResource(R.drawable.text_logo);
+
     }
 
     @Override
@@ -177,20 +243,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (type == 0) {
             //layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
             add_new_card.setVisibility(View.INVISIBLE);
+            add_interests.setVisibility(View.VISIBLE);
             vpPager.setCurrentItem(0);
         } else if (type == 1) {
            // layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
             btn_two.setBackgroundResource(R.drawable.actionbar_selected_interest);
             add_new_card.setVisibility(View.VISIBLE);
+            add_interests.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(1);
         } else if (type == 2) {
           //  layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
             btn_three.setBackgroundResource(R.drawable.actionbar_selected_editcard);
             add_new_card.setVisibility(View.INVISIBLE);
+            add_interests.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(2);
         } else {
-          //  layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected4);
             btn_four.setBackgroundResource(R.drawable.actionbar_selected_option);
+            add_new_card.setVisibility(View.INVISIBLE);
+            add_interests.setVisibility(View.INVISIBLE);
             vpPager.setCurrentItem(3);
         }
     }
@@ -210,10 +280,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //인텐트 받아왔을 때.. 근데 이거 있으면 onStart 호출 불가
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
 
-//                Bundle b = getIntent().getExtras();
-//        if (b != null)
-//            kakaoID = b.getString("kakaoID");
+
 
 
         //My_Profile로 부터 비트맵을 가져온다.(카메라 사진)
@@ -229,10 +299,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("MainActivity : ", "bm is null");
         }
 
+        if(intent.hasExtra("keyword"))
+        {
+            keyword = intent.getStringArrayListExtra("keyword");
+            Log.d("In mainActivity : " , keyword.get(0));
+            Log.d("In mainActivity : " , keyword.get(1));
+            Log.d("In mainActivity : " , keyword.get(2));
+            Log.d("In mainActivity : " , keyword.get(3));
+            Log.d("In mainActivity : " , keyword.get(4));
+
+            FirstFragment frament = new FirstFragment();
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("keyword", keyword);
+            frament.setArguments(bundle);
+        }
+
 //        Log.d("사진", bm.toString());
 //        Log.d("kakaoId : ", kakaoID);
 
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        logo.setImageDrawable(null);
+        add_new_card.setImageDrawable(null);
+        add_interests.setImageDrawable(null);
     }
 
 

@@ -1,5 +1,7 @@
 package com.jifalops.btleadvertise.Fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -92,6 +94,34 @@ public class SecondFragment extends Fragment {
                 startActivity(newActivity);
             }
         }) ;
+        listview.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("CLICK", "OnLongClickListener");
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("명함 삭제")
+                        .setMessage("정말 삭제하시겠습니까")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //여기서 명함 삭제 구현 예정 몇번째 명함인지를 알아야 지울 수 있음..!!
+                                Log.d("곧 삭제할 예정입니다.", "기다려주세요");
+
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+
+                        })
+                        .show();
+
+                return true; // 다음 이벤트 계속 진행 false, 이벤트 완료 true
+            }
+        });
+
         return view;
     }
 

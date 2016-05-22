@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.jifalops.btleadvertise.Fragment.FirstFragment;
 import com.jifalops.btleadvertise.R;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 /**
  * Created by client on 2016. 5. 17..
  */
-public class Add_Keyword extends ActionBarActivity {
+public class Pick_Interests extends ActionBarActivity {
 
     private TextView keyword_1;
     private TextView keyword_2;
@@ -56,7 +57,7 @@ public class Add_Keyword extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.add_keyword);
+        setContentView(R.layout.pick_interests);
 
         init();
         clickevent();
@@ -86,15 +87,8 @@ public class Add_Keyword extends ActionBarActivity {
         social_9 = (TextView) findViewById(R.id.social_9);
         social_10 = (TextView) findViewById(R.id.social_10);
         social_11 = (TextView) findViewById(R.id.social_11);
-
         btn_delete_keywords = (Button) findViewById(R.id.delete_keywords);
 //
-        category_1 = (RelativeLayout) findViewById(R.id.category_1);
-        category_2 = (LinearLayout) findViewById(R.id.category_2);
-        category_3 = (LinearLayout) findViewById(R.id.category_3);
-        category_4 = (LinearLayout) findViewById(R.id.category_4);
-        category_5 = (LinearLayout) findViewById(R.id.category_5);
-
         keyword_1.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
         keyword_2.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
         keyword_3.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
@@ -110,11 +104,12 @@ public class Add_Keyword extends ActionBarActivity {
         social_8.setBackgroundResource(R.drawable.add_keyword_btn_un_keyword);
         social_9.setBackgroundResource(R.drawable.add_keyword_btn_un_keyword);
         social_11.setBackgroundResource(R.drawable.add_keyword_btn_un_keyword);
-//        category_1.setBackgroundResource(R.drawable.add_keyword_category_sports);
-//        category_2.setBackgroundResource(R.drawable.add_keyword_category_culture);
-//        category_3.setBackgroundResource(R.drawable.add_keyword_category_hobby);
-//        category_4.setBackgroundResource(R.drawable.add_keyword_category_social);
-//        category_5.setBackgroundResource(R.drawable.add_keyword_category_sports);
+//        category_1 = (RelativeLayout) findViewById(R.id.category_1);
+//        category_2 = (LinearLayout) findViewById(R.id.category_2);
+//        category_3 = (LinearLayout) findViewById(R.id.category_3);
+//        category_4 = (LinearLayout) findViewById(R.id.category_4);
+//        category_5 = (LinearLayout) findViewById(R.id.category_5);
+//
 ////        Drawable drawable1 = getResources().getDrawable(R.drawable.add_keyword_category_hobby);
 //
 //        category_1.setBackground(drawable1);
@@ -140,7 +135,7 @@ public class Add_Keyword extends ActionBarActivity {
         keyword_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               keyword_1.setText("");
+                keyword_1.setText("");
             }
         });
         keyword_2.setOnClickListener(new View.OnClickListener() {
@@ -170,7 +165,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_1.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_1.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_1.getText()) keyword_2.setText(social_1.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_1.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_1.getText());
@@ -180,7 +175,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_2.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_2.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_2.getText()) keyword_2.setText(social_2.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_2.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_2.getText());
@@ -190,7 +185,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_3.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_3.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_3.getText()) keyword_2.setText(social_3.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_3.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_3.getText());
@@ -200,7 +195,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_4.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_4.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_4.getText()) keyword_2.setText(social_4.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_4.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_4.getText());
@@ -210,7 +205,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_5.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_5.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_5.getText()) keyword_2.setText(social_5.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_5.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_5.getText());
@@ -220,7 +215,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_6.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_6.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_6.getText()) keyword_2.setText(social_6.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_6.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_6.getText());
@@ -230,7 +225,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_7.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_7.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_7.getText()) keyword_2.setText(social_7.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_7.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_7.getText());
@@ -240,7 +235,7 @@ public class Add_Keyword extends ActionBarActivity {
         social_8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_8.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_8.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_8.getText()) keyword_2.setText(social_8.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_8.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_8.getText());
@@ -250,21 +245,21 @@ public class Add_Keyword extends ActionBarActivity {
         social_9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_9.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_9.getText());
                 else if(keyword_2.getText()=="" && keyword_1!=social_9.getText()) keyword_2.setText(social_9.getText());
                 else if(keyword_3.getText()=="") keyword_3.setText(social_9.getText());
                 else if(keyword_4.getText()=="") keyword_4.setText(social_9.getText());
                 else if(keyword_5.getText()=="") keyword_5.setText(social_9.getText());
             }
         });
-        social_11.setOnClickListener(new View.OnClickListener() {
+        social_10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                     if(keyword_1.getText()=="") keyword_1.setText(social_11.getText());
-                else if(keyword_2.getText()=="" && keyword_1!=social_11.getText()) keyword_2.setText(social_11.getText());
-                else if(keyword_3.getText()=="" ) keyword_3.setText(social_11.getText());
-                else if(keyword_4.getText()=="") keyword_4.setText(social_11.getText());
-                else if(keyword_5.getText()=="") keyword_5.setText(social_11.getText());
+                if(keyword_1.getText()=="") keyword_1.setText(social_10.getText());
+                else if(keyword_2.getText()=="" && keyword_1!=social_10.getText()) keyword_2.setText(social_10.getText());
+                else if(keyword_3.getText()=="" ) keyword_3.setText(social_10.getText());
+                else if(keyword_4.getText()=="") keyword_4.setText(social_10.getText());
+                else if(keyword_5.getText()=="") keyword_5.setText(social_10.getText());
             }
         });
 
@@ -298,31 +293,31 @@ public class Add_Keyword extends ActionBarActivity {
         keyword.add(3,keyword_4.getText().toString());
         keyword.add(4,keyword_5.getText().toString());
 
-        Intent intent = new Intent(this, Add_Profile.class);
+        Intent intent = new Intent(Pick_Interests.this, MainActivity.class);
+        intent.putExtra("keyword", keyword);
 
-        intent.putStringArrayListExtra("keyword", keyword);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Log.d("In add_keyword : ", "intent 넘기기");
-//        Bundle b = new Bundle();
-//        b.putString("kakaoID", kakaoID); //Your id
-//        b.putString("kakaoNICKNAME", kakaoNickname); //Your id
-//        intent.putExtras(b); //Put your id to your next Intent
         startActivity(intent);
+//        FirstFragment frament = new FirstFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putStringArrayList("keyword", keyword);
+//
+//        frament.setArguments(bundle);
 
-      //  finish();
-//        category_1.setBackground(null);
-//        category_2.setBackground(null);
-//        category_3.setBackground(null);
-//        category_4.setBackground(null);
-//        category_5.setBackground(null);
-        return super.onSupportNavigateUp();
-    }
+//        Intent intent = new Intent(this, FirstFragment.class);
+//
+//        intent.putStringArrayListExtra("keyword", keyword);
+//
+    //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        Log.d("In add_keyword : ", "intent 넘기기");
+////        Bundle b = new Bundle();
+////        b.putString("kakaoID", kakaoID); //Your id
+////        b.putString("kakaoNICKNAME", kakaoNickname); //Your id
+////        intent.putExtras(b); //Put your id to your next Intent
+            //startActivity(intent);
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+          finish();
         keyword_1.setBackground(null);
         keyword_2.setBackground(null);
         keyword_3.setBackground(null);
@@ -339,11 +334,11 @@ public class Add_Keyword extends ActionBarActivity {
         social_9.setBackground(null);
         social_10.setBackground(null);
         social_11.setBackground(null);
-        category_1.setBackground(null);
-        category_2.setBackground(null);
-        category_3.setBackground(null);
-        category_4.setBackground(null);
-        category_5.setBackground(null);
-
+//        category_1.setBackground(null);
+//        category_2.setBackground(null);
+//        category_3.setBackground(null);
+//        category_4.setBackground(null);
+//        category_5.setBackground(null);
+        return super.onSupportNavigateUp();
     }
 }

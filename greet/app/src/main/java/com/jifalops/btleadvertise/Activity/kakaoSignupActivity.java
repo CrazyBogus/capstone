@@ -60,17 +60,25 @@ public class kakaoSignupActivity extends Activity {
             public void onSuccess(UserProfile userProfile) {  //성공 시 userProfile 형태로 반환
                 Logger.d("UserProfile : " + userProfile);
                 String kakaoId = String.valueOf(userProfile.getId());
-                Log.d("카카오 로그인 아이디 : ", kakaoId);
-                redirectMainActivity(kakaoId); // 로그인 성공시 MainActivity로
+                String kakaoNickname = String.valueOf(userProfile.getNickname());
+                Log.d("카카오 로그인 아이디 : ", kakaoId + " " +kakaoNickname);
+
+                redirectMainActivity(kakaoId, kakaoNickname); // 로그인 성공시 MainActivity로
             }
         });
     }
 
-    private void redirectMainActivity(String kakaoID) {
+    private void redirectMainActivity(String kakaoID, String kakaoNickname) {
         Intent intent = new Intent(this, MainActivity.class);
-        Bundle b = new Bundle();
-        b.putString("kakaoID", kakaoID); //Your id
-        intent.putExtras(b); //Put your id to your next Intent
+
+
+        intent.putExtra("kakaoID", kakaoID);
+        intent.putExtra("kakaoNICKNAME", kakaoNickname);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        Bundle b = new Bundle();
+//        b.putString("kakaoID", kakaoID); //Your id
+//        b.putString("kakaoNICKNAME", kakaoNickname); //Your id
+//        intent.putExtras(b); //Put your id to your next Intent
         startActivity(intent);
         finish();
     }

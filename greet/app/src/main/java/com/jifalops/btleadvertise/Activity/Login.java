@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 
@@ -35,12 +39,17 @@ public class Login extends Activity {
     ImageButton btn_login;
     EditText editText_login_name;
     RelativeLayout mainLayout;
+    ImageView img_bg;
     Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(com.jifalops.btleadvertise.R.layout.login);
+        setContentView(R.layout.login);
 
+
+        img_bg = (ImageView) findViewById(R.id.img_bg);
+        img_bg.setImageResource(R.drawable.login_bg);
         /**카카오톡 로그아웃 요청**/
         //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
         //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
@@ -56,20 +65,7 @@ public class Login extends Activity {
 //        callback = new SessionCallback();
 //        Session.getCurrentSession().addCallback(callback);
 
-       // getAppKeyHash();
 
-
-//        try {
-//
-//            Signature[] sigs = this.getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES).signatures;
-//            for (Signature sig : sigs) {
-//                MessageDigest md = MessageDigest.getInstance("SHA");
-//                Log.d("myapp", "Signature hashcode : " + sig.hashCode());
-//                Log.d("test", android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP));
-//            }
-//        } catch (Exception e) {
-//            Log.d("myapp", e.getMessage());
-//        }
         btn_login = (ImageButton) findViewById(R.id.login_imageButton);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +89,7 @@ public class Login extends Activity {
 
 
         mainLayout = (RelativeLayout) findViewById(R.id.login);
+
         mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +101,11 @@ public class Login extends Activity {
         });
 
     }
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+         // img_bg.setImageDrawable(null);
+       }
 //
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -191,8 +193,5 @@ public class Login extends Activity {
             Log.e("name not found", e.toString());
         }
     }
-
-
-
 }
 

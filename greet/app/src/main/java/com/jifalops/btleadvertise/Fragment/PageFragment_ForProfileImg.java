@@ -23,6 +23,7 @@ public class PageFragment_ForProfileImg extends Fragment {
     private int mPageNumber;
     private ImageView mImageView;
     private ImageView my_profile_image;
+    private ImageView main;
     private Bitmap photo;
     private int test;
     private Bundle mTagObjectId;
@@ -41,6 +42,7 @@ public class PageFragment_ForProfileImg extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPageNumber = getArguments().getInt("page");
+
 //        photo = getArguments().getParcelable("img");
 
       //  Log.d("test : ", BitMapToString(photo));
@@ -57,7 +59,8 @@ public class PageFragment_ForProfileImg extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.viewpager_myprofile_pics, container, false);
 //        ((TextView) rootView.findViewById(R.id.number)).setText(mPageNumber + "");
         Bundle mTagObjectId = this.getArguments();
-
+        main = (ImageView) getActivity().findViewById(R.id.main);
+        main.setImageResource(R.drawable.main_unselected);
         Log.d("여기까지 옵니다","asd");
 
         if (getActivity().getIntent().hasExtra("photo")) {
