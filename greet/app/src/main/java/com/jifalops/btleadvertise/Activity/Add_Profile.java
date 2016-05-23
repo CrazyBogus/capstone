@@ -44,8 +44,12 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,18 +59,24 @@ import java.util.concurrent.ExecutionException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
-import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 import cz.msebera.android.httpclient.extras.Base64;
+import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
 
 /**
  * Created by client on 2016. 5. 14..
  */
 public class Add_Profile extends ActionBarActivity implements View.OnClickListener {
-
+    private File f;
+    private File copy_file;
+    private File original_file;
     private ImageView my_profile_image;
     private ImageView btn_edit_profile_image;
     private ImageView btn_keyword;
     private ImageView img_video;
+    private ImageView onoff_2;
+    private ImageView onoff_3;
+    private ImageView onoff_4;
+    private ImageView onoff_5;
     private TextView keyword_1;
     private TextView keyword_2;
     private TextView keyword_3;
@@ -74,6 +84,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
     private TextView keyword_5;
     private Uri mTempImageUri;
     private Uri getImagePath;
+    private String filePath;
     private static final int PICK_FROM_CAMERA = 100;
     private static final int PICK_FROM_ALBUM = 200;
     private static final int CROP_FROM_CAMERA = 300;
@@ -93,6 +104,16 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
     private DbOpenHelper mDbOpenHelper;
     private static String kakaoID;
     private byte[] temp;
+    private boolean onoff1=true;
+    private boolean onoff2=true;
+    private boolean onoff3=true;
+    private boolean onoff4=true;
+    private boolean onoff5=true;
+    private boolean flag_photo = true;
+    private String full_path;
+    private ArrayList<String> onoff = new ArrayList<String>();
+    int card_number = 1;
+    private String ttemp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +123,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         //Editview 외에 다른 곳을 터치하면 키보드가 내려가도록 구현.
         setupUI(Sv);
 
+//        onoff.set(0,"1");
         // ActionBar의 배경색 변경
         getSupportActionBar().setTitle("");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0xFF01afff));
@@ -191,6 +213,14 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         btn_keyword = (ImageView) findViewById(R.id.setting_interests);
         btn_edit_profile_image = (ImageView) findViewById(R.id.edit_profile_image);
         btn_edit_profile_image.setOnClickListener(this);
+        onoff_2 = (ImageView) findViewById(R.id.onoff_phonenumber);
+        onoff_3 = (ImageView) findViewById(R.id.onoff_status);
+        onoff_4 = (ImageView) findViewById(R.id.onoff_sns);
+        onoff_5 = (ImageView) findViewById(R.id.onoff_video);
+        onoff_2.setOnClickListener(this);
+        onoff_3.setOnClickListener(this);
+        onoff_4.setOnClickListener(this);
+        onoff_5.setOnClickListener(this);
         img_video = (ImageView) findViewById(R.id.image_video);
         mData = new ArrayList<Bitmap>();
         Tv_name = (EditText) findViewById(R.id.textview_name);
@@ -208,6 +238,8 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         keyword_4 = (TextView) findViewById(R.id.keyword4);
         keyword_5 = (TextView) findViewById(R.id.keyword5);
 
+
+
         keyword_1.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
         keyword_2.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
         keyword_3.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
@@ -217,6 +249,17 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         my_profile_image.setImageResource(R.drawable.my_profile_image_default);
         btn_edit_profile_image.setImageResource(R.drawable.my_profile_edit_image);
         img_video.setImageResource(R.drawable.my_profile_video_default);
+        onoff_2.setImageResource(R.drawable.my_profile_toggle_on);
+        onoff_3.setImageResource(R.drawable.my_profile_toggle_on);
+        onoff_4.setImageResource(R.drawable.my_profile_toggle_on);
+        onoff_5.setImageResource(R.drawable.my_profile_toggle_on);
+       if(onoff.size()==0) {
+           onoff.add(null);
+           onoff.add(null);
+           onoff.add(null);
+           onoff.add(null);
+           onoff.add(null);
+       }
     }
 
 
@@ -243,24 +286,18 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
 
             //이름과 사진은 필수로
-            if ( Tv_name.getText().toString().length() != 0 || photo != null) {
+            if ( Tv_name.getText().toString().length() != 0 && photo != null) {
                 //비트맵 바이트로 변환
                 // 출력 스트림 생성, 압축, 바이트 어래이로 변환
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
-                int card_number = 1;
+
                 byte[] imageInByte = stream.toByteArray();
                 temp = imageInByte;
                 String nickname = Tv_name.getText().toString();
-                ArrayList<String> onoff = new ArrayList<String>();
-                onoff.add(0, "0");
-                onoff.add(1, "1");
-                onoff.add(2, "0");
-                onoff.add(3, "1");
-                onoff.add(4, "0");
                 String phonenumber = Tv_phonenumber.getText().toString();
-                if(Tv_phonenumber.getText().toString().length() == 0) phonenumber = "000-0000-0000";
+                if(Tv_phonenumber.getText().toString().length() == 0) phonenumber = "010-5136-6402";
                 ArrayList<String> sns = new ArrayList<String>();
                 sns.add(0,Tv_sns1.getText().toString());
                 sns.add(1,Tv_sns2.getText().toString());
@@ -286,7 +323,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 //                mDbOpenHelper.my_profile_insert(keyword,imageInByte, nickname, onoff, phonenumber, sns,status);
   //              Log.d("In Add_profile : ", "성공적으로 DB input");
     //            mDbOpenHelper.select();
-                serverConnect(5, nickname, phonenumber,keyword,sns,onoff,status,2);
+                serverConnect(card_number, nickname, phonenumber,keyword,sns,onoff,status,2);
                 //card_number++;
                 //json :{	id,
 //                card_number
@@ -325,8 +362,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             }
 
 
-            my_profile_image.setImageDrawable(null);
-            btn_keyword.setImageDrawable(null);
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -371,7 +407,6 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 // 이미지뷰에 이미지를 보여준다거나 부가적인 작업 이후에
                 // 임시 파일을 삭제합니다.
                 final Bundle extras = data.getExtras();
-
                 if(extras != null)
                 {
                     photo = extras.getParcelable("data");
@@ -381,27 +416,31 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
 
                 }
+                full_path = mTempImageUri.getPath();
+              //  getImagePath = mTempImageUri;
+                Log.d("Path : " , full_path);
+            //     임시 파일 삭제
 
-                getImagePath = mTempImageUri;
+                f = new File(full_path);
 
-                // 임시 파일 삭제
 
-                File f = new File(mTempImageUri.getPath());
 
-                if(f.exists())
-                {
-                    f.delete();
-                }
-
-                break;
+                  break;
             }
 
             case PICK_FROM_ALBUM:
             {
+
                 // 이후의 처리가 카메라와 같으므로 일단  break없이 진행합니다.
                 // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
-
                 mTempImageUri = data.getData();
+                original_file = getImageFile(mTempImageUri);
+
+                mTempImageUri = createSaveCropFile();
+                copy_file = new File(mTempImageUri.getPath());
+
+                // SD카드에 저장된 파일을 이미지 Crop을 위해 복사한다.
+                copyFile(original_file , copy_file);
 
             }
 
@@ -412,7 +451,6 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(mTempImageUri, "image/*");
-              //  intent.setDataAndType(getImagePath, "image/*");
                 intent.putExtra("aspectX", 73);
                 intent.putExtra("aspectY", 50);
                 intent.putExtra("outputX", 365);
@@ -420,6 +458,8 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 intent.putExtra("noFaceDetection",true);
                 intent.putExtra("scale", true);
                 intent.putExtra("return-data", true);
+
+//                Log.d("ttemp 값 : ", ttemp);
                 startActivityForResult(intent, CROP_FROM_CAMERA);
 
                 break;
@@ -439,12 +479,13 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
      * http://www.damonkohler.com/2009/02/android-recipes.html
      * http://www.firstclown.us/tag/android/
      */
-
+        flag_photo = true;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // 임시로 사용할 파일의 경로를 생성
-        String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        String url = "1.jpg";
         mTempImageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+
 
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mTempImageUri);
         // 특정기기에서 사진을 저장못하는 문제가 있어 다음을 주석처리 합니다.
@@ -456,7 +497,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
      * 앨범에서 이미지 가져오기
      */
     private void doTakeAlbumAction()
-    {
+    {   flag_photo = false;
         // 앨범 호출
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
@@ -465,45 +506,97 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
     @Override
     public void onClick(View v)
     {
-        DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                doTakePhotoAction();
-            }
-        };
-
-        DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-                doTakeAlbumAction();
-            }
-        };
-
-        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
-        {
-            @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
-
-                dialog.dismiss();
-            }
-        };
-
-        new AlertDialog.Builder(this)
-
-                .setTitle("업로드할 이미지 선택")
-                .setPositiveButton("취소", cancelListener)
-                .setNeutralButton("사진촬영", cameraListener)
-                .setNegativeButton("앨범선택", albumListener)
 
 
+        switch (v.getId()){
+            case R.id.onoff_phonenumber:
+                if(onoff2) {
+                    onoff_2.setImageResource(R.drawable.my_profile_toggle_off);
+                     onoff.set(1,"0");
+                    onoff2=false;
+                }
+                else{
+                    onoff_2.setImageResource(R.drawable.my_profile_toggle_on);
+                    onoff.set(1,"1");
+                    onoff2=true;
+                }
+
+                break;
+            case R.id.onoff_status:
+                if(onoff3) {
+                    onoff_3.setImageResource(R.drawable.my_profile_toggle_off);
+                    onoff.set(2,"0");
+                    onoff3=false;
+                }
+                else{
+                    onoff_3.setImageResource(R.drawable.my_profile_toggle_on);
+                    onoff.set(2,"1");
+                    onoff3=true;
+                }
+                break;
+            case R.id.onoff_sns:
+                if(onoff4) {
+                    onoff_4.setImageResource(R.drawable.my_profile_toggle_off);
+                    onoff.set(3,"0");
+                    onoff4=false;
+                }
+                else{
+                    onoff_4.setImageResource(R.drawable.my_profile_toggle_on);
+                    onoff.set(3,"1");
+                    onoff4=false;
+                }
+                break;
+            case R.id.onoff_video:
+                if(onoff2) {
+                    onoff_5.setImageResource(R.drawable.my_profile_toggle_off);
+                    onoff.set(4,"0");
+                    onoff5=false;
+                }
+                else{
+                    onoff_5.setImageResource(R.drawable.my_profile_toggle_on);
+                    onoff.set(4,"1");
+                    onoff5=false;
+                }
+                break;
+            case R.id.edit_profile_image:
+                DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        doTakePhotoAction();
+                    }
+                };
+                DialogInterface.OnClickListener albumListener = new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        doTakeAlbumAction();
+                    }
+                };
+                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+
+                        dialog.dismiss();
+                    }
+                };
+                new AlertDialog.Builder(this)
+                        .setTitle("업로드할 이미지 선택")
+                        .setPositiveButton("취소", cancelListener)
+                        .setNeutralButton("사진촬영", cameraListener)
+                        .setNegativeButton("앨범선택", albumListener)
+                        .show();
+                break;
+
+        }
 
 
-                .show();
+
+
     }
     // back 버튼 눌렀을 때 이벤트 처리
     @Override
@@ -565,49 +658,32 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         my_profile_image.setImageDrawable(null);
         img_video.setImageDrawable(null);
         btn_edit_profile_image.setImageDrawable(null);
-
+        onoff_2.setImageDrawable(null);
+        onoff_3.setImageDrawable(null);
+        onoff_4.setImageDrawable(null);
+        onoff_5.setImageDrawable(null);
     }
 
     public void serverConnect(int card_number, String nickname, String phonenumber, ArrayList<String> keyword, ArrayList<String> sns, ArrayList<String> onoff, String status, int image_size)
     {
 
 
-        Log.d("In serverconnect : ", "here");
-        String url = "http://52.69.46.152:8001/api/upload_card";
+        String url = "http://52.69.46.152:8001/api/upload_card/android";
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams param2 = new RequestParams();
-        final String contentType = RequestParams.APPLICATION_OCTET_STREAM;
-
         param2.setForceMultipartEntityContentType(true);
 
+        File file1;
+        file1 = f;
+       // Log.d("file name : ", file1.getName());
 
-        File file1 = new File(getPath(getImagePath));
-
-        file1.renameTo(file1);
-
-
-        Log.d("file name : ", file1.getName());
-        //File file2 = new File(getPath(getImagePath),"1.jpg");
-        //file1.renameTo(file2);
         client.addHeader("Accept", "*/*");
-       // client.addHeader("FileName",      "android"+System.currentTimeMillis()+".jpg");
-       // client.addHeader("Content-Type", "multipart/form-data; boundary=hihi");
-
-
-
         client.setMaxRetriesAndTimeout(3, 30000);
         client.setUserAgent("android-async-http-1.4.9");
-//        MultipartEntityBuilder entity = MultipartEntityBuilder.create();
-//        for (BasicNameValuePair nameValuePair : nameValuePairs) {
-//            entity.addTextBody(nameValuePair.getName(), nameValuePair.getValue());
-//        }
-//        Log.d("FilePath : ", getImagePath.getPath());
 
+        //   Log.d("File Info : ", file1.getPath());
 
-//        Log.d("File Info : ", file.getName());
-           Log.d("File Info : ", file1.getPath());
-
-        if(kakaoID==null) kakaoID="123455";
+        if(kakaoID==null) kakaoID="1234";
 
 
 
@@ -619,46 +695,14 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             param2.put("card_number",card_number);
             param2.put("nickname",nickname);
             param2.put("phone_number",phonenumber);
-            param2.put("pic2", file1.getName());
             param2.put("keyword",keyword);
             param2.put("sns_list",sns);
-            param2.put("on_off",onoff);
+          //param2.put("on_off",onoff);
             param2.put("status_message",status);
             param2.put("image_size",image_size);
-            param2.put("test", temp.length);
-            param2.put("test", temp);
-            param2.put("files",photo);
+            param2.put("picture", file1);
 
-           // param2.put("pic", file1.getPath());
-            param2.put("pic", file1.getPath());
-            param2.put("pic", file1);
-
-          //  param2.put("files", file2);
-      //      param2.put("picture", file);
-
-        } catch(Exception e) {e.printStackTrace();}
-    //    param2.setHttpEntityIsRepeatable(true);
-    //    param2.setUseJsonStreamer(false);
-//           param2.put("picture", temp);
-
-
-     //   Log.d("In Param2 info : ", "file name is : " +file.getName());
-//        json :{	id,
-//                card_number
-//            nickname
-//                    phone_number
-//            keyword (배열, 각키워드앞에 #이 붙음)
-//            sns_list  (배열)
-//            on_off (size 5개배열 0: card 1 :phone_number 2: status_message 3: sns 4: video )
-//            status_message
-//            image_size (유저가 5개 올릴 경우 main까지 6을 보내주셔야되요)
-//        }
-//
-
-
-//        files (filename : picture , filename : 0.jpg
-//        1.jpg
-//        main.jpg)   //사진 인덱스는 사진 이름에 넣어서 보내주시고, 사람이 다섯개를 올리면  5개  0.jpg~4.jpg 보내주시고 그중  프로필	     //사진을 main.jpg로 다시 보내주셔야되요
+        } catch(FileNotFoundException e) {e.printStackTrace();}
 
         Log.d("In serverconnect : ", "here11");
         client.post(mContext, url, param2, new JsonHttpResponseHandler() {
@@ -673,7 +717,8 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 Log.d("In Add_Profile : ", response.toString());
                 try {
 
-                    final boolean connect_result = response.getBoolean("take");
+                     String connect_result = response.getString("result");
+                    Log.d("result : ", connect_result);
 
 
 
@@ -706,6 +751,113 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         cursor.moveToFirst();
         return cursor.getString(columnIndex);
     }
+
+    public void Getonoff(int i)
+    {
+        int tempOnoff = i;
+        Log.d("온오프값을 받았습니다.", Integer.toString(tempOnoff));
+        if(onoff.size()==0) {
+            onoff.add(0,null);
+            onoff.add(1,null);
+            onoff.add(2,null);
+            onoff.add(3,null);
+            onoff.add(4,null);
+            onoff.set(0,Integer.toString(tempOnoff));
+        }
+
+        else{
+
+            onoff.set(0,Integer.toString(tempOnoff));
+
+        }
+    }
+
+
+    /**
+     * Crop된 이미지가 저장될 파일을 만든다.
+     * @return Uri
+     */
+    private Uri createSaveCropFile(){
+        Uri uri;
+        String url = "1.jpg";
+        uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+        return uri;
+    }
+
+
+    /**
+     * 선택된 uri의 사진 Path를 가져온다.
+     * uri 가 null 경우 마지막에 저장된 사진을 가져온다.
+     * @param uri
+     * @return
+     */
+    private File getImageFile(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        if (uri == null) {
+            uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        }
+
+        Cursor mCursor = getContentResolver().query(uri, projection, null, null,
+                MediaStore.Images.Media.DATE_MODIFIED + " desc");
+        if(mCursor == null || mCursor.getCount() < 1) {
+            return null; // no cursor or no record
+        }
+        int column_index = mCursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        mCursor.moveToFirst();
+
+        String path = mCursor.getString(column_index);
+
+        if (mCursor !=null ) {
+            mCursor.close();
+            mCursor = null;
+        }
+
+        return new File(path);
+    }
+
+    /**
+     * 파일 복사
+     * @param srcFile : 복사할 File
+     * @param destFile : 복사될 File
+     * @return
+     */
+    public static boolean copyFile(File srcFile, File destFile) {
+        boolean result = false;
+        try {
+            InputStream in = new FileInputStream(srcFile);
+            try {
+                result = copyToFile(in, destFile);
+            } finally  {
+                in.close();
+            }
+        } catch (IOException e) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**
+     * Copy data from a source stream to destFile.
+     * Return true if succeed, return false if failed.
+     */
+    private static boolean copyToFile(InputStream inputStream, File destFile) {
+        try {
+            OutputStream out = new FileOutputStream(destFile);
+            try {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) >= 0) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            } finally {
+                out.close();
+            }
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 }
 
 

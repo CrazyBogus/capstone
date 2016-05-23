@@ -52,7 +52,7 @@ public class My_Profile extends ActionBarActivity implements View.OnClickListene
     private static final String TEMP_FILE_NAME = "tempFile.jpg";
 
     private Uri mTempImageUri;
-
+    private Uri getImagePath;
     ///사진
     private static final int PICK_FROM_CAMERA = 100;
     private static final int PICK_FROM_ALBUM = 200;

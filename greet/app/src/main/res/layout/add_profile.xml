@@ -164,7 +164,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/my_profile_toggle_off"/>
+                    android:id="@+id/onoff_phonenumber" />
                 <EditText
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -191,7 +191,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/my_profile_toggle_off"/>
+                    android:id="@+id/onoff_status" />
                 <!-- 자기소개 -->
                 <EditText
                     android:layout_width="0dp"
@@ -217,7 +217,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/my_profile_toggle_off"/>
+                    android:id="@+id/onoff_sns" />
                 <!-- sns링크 -->
                 <EditText
                     android:layout_width="0dp"
@@ -292,10 +292,9 @@
             </LinearLayout>
 
             <!--동영상-->
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:layout_marginBottom="15dp">
 
                 <ImageView
@@ -303,8 +302,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     />
-
-            </LinearLayout>
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="right"
+                    android:id="@+id/onoff_video" />
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.jifalops.btleadvertise.Activity.Add_Profile;
 import com.jifalops.btleadvertise.Item.MyCardListViewItem;
 import com.jifalops.btleadvertise.R;
 
@@ -30,8 +31,8 @@ public class MyCardAdapter extends BaseAdapter {
     private Bitmap mData;
     private LayoutInflater inflater;
     private ViewHolder viewHolder;
-
-
+    private ImageView onoff_1;
+    private boolean onoff1=true;
     public MyCardAdapter() {
         listViewItemList = new ArrayList<MyCardListViewItem>();
     }
@@ -62,7 +63,26 @@ public class MyCardAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        onoff_1 = (ImageView) convertView.findViewById(R.id.onoff_card);
+        onoff_1.setImageResource(R.drawable.my_profile_toggle_on);
+        //    위에서 생성한 listview에 클릭 이벤트 핸들러 정의.
 
+        onoff_1.setOnClickListener(new View.OnClickListener() {
+            Add_Profile temp = new Add_Profile();
+            @Override
+            public void onClick(View v) {
+                if(onoff1) {
+                    onoff_1.setImageResource(R.drawable.my_profile_toggle_off);
+                    onoff1=false;
+                    temp.Getonoff(0);
+                }
+                else{
+                    onoff_1.setImageResource(R.drawable.my_profile_toggle_on);
+                    onoff1=true;
+                    temp.Getonoff(1);
+                }
+            }
+        });
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
 //        ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView) ;
 

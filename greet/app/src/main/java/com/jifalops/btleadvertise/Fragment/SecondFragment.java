@@ -17,11 +17,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.jifalops.btleadvertise.Activity.Add_Profile;
 import com.jifalops.btleadvertise.Activity.MainActivity;
 import com.jifalops.btleadvertise.Activity.My_Profile;
 import com.jifalops.btleadvertise.Adapters.MyCardAdapter;
+import com.jifalops.btleadvertise.Database.DbOpenHelper;
 import com.jifalops.btleadvertise.R;
 
 /**
@@ -31,6 +34,7 @@ public class SecondFragment extends Fragment {
     private ListView listview ;
     private MyCardAdapter adapter;
 
+    private DbOpenHelper mDbOpenHelper;
     // Store instance variables
 
     // newInstance constructor for creating fragment with arguments
@@ -79,10 +83,11 @@ public class SecondFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_second, container, false);
+        final View view = inflater.inflate(R.layout.fragment_second, container, false);
         // 리스트뷰 참조 및 Adapter달기
         listview = (ListView) view.findViewById(R.id.my_card_list);
         listview.setAdapter(adapter);
+
 
         // 위에서 생성한 listview에 클릭 이벤트 핸들러 정의.
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,9 +99,12 @@ public class SecondFragment extends Fragment {
                 startActivity(newActivity);
             }
         }) ;
-        listview.setOnLongClickListener(new View.OnLongClickListener(){
+        listview.setLongClickable(true);
+        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           final int position, long arg3) {
                 Log.d("CLICK", "OnLongClickListener");
                 new AlertDialog.Builder(getActivity())
                         .setTitle("명함 삭제")
@@ -106,6 +114,10 @@ public class SecondFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 //여기서 명함 삭제 구현 예정 몇번째 명함인지를 알아야 지울 수 있음..!!
                                 Log.d("곧 삭제할 예정입니다.", "기다려주세요");
+                                mDbOpenHelper = new DbOpenHelper(getActivity());
+                                mDbOpenHelper.open();
+                                Log.d("In LongClickListener : ", "Position 값 : " + Integer.toString(position));
+                                //mDbOpenHelper.my_profile_remove(position);
 
                             }
                         })
@@ -117,10 +129,12 @@ public class SecondFragment extends Fragment {
 
                         })
                         .show();
-
-                return true; // 다음 이벤트 계속 진행 false, 이벤트 완료 true
+                adapter.notifyDataSetChanged();
+                return true;
             }
         });
+
+//
 
         return view;
     }

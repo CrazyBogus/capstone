@@ -28,7 +28,8 @@
             android:text="#최소"
             android:textColor="#13eeff"
             android:textSize="14sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:id="@+id/Tv_1" />
         <TextView
             android:layout_width="70dp"
             android:layout_height="50dp"
@@ -37,7 +38,8 @@
             android:text="#최소"
             android:textColor="#13eeff"
             android:textSize="14sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:id="@+id/Tv_2" />
         <TextView
             android:layout_width="70dp"
             android:layout_height="50dp"
@@ -46,7 +48,8 @@
             android:text="#최소"
             android:textColor="#13eeff"
             android:textSize="14sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:id="@+id/Tv_3" />
         <TextView
             android:layout_width="70dp"
             android:layout_height="50dp"
@@ -55,7 +58,8 @@
             android:text="#최소"
             android:textColor="#13eeff"
             android:textSize="14sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:id="@+id/Tv_4" />
         <TextView
             android:layout_width="70dp"
             android:layout_height="50dp"
@@ -64,7 +68,16 @@
             android:text="#최소"
             android:textColor="#13eeff"
             android:textSize="14sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:id="@+id/Tv_5" />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+
+
+            android:id="@+id/onoff_card" />
 
     </FrameLayout>
 </LinearLayout>

@@ -32,15 +32,33 @@ public class Databases {
         };
         public static final String IMAGE = "image";
         public static final String NICKNAME = "nickname";
-        public static final String ONOFF = "onoff";
+        public static final ArrayList<String> ONOFF =  new ArrayList<String>() {
+            {
+                add("onoff1");
+                add("onoff2");
+                add("onoff3");
+                add("onoff4");
+                add("onoff5");
+            }
+        };
         public static final String PHONENUMBER = "phonenumber";
-        public static final String SNS = "sns";
+        public static final ArrayList<String> SNS = new ArrayList<String>() {
+            {
+                add("sns1");
+                add("sns2");
+                add("sns3");
+            }
+        };
         public static final String STATUS = "status";
         public static final String _TABLENAME = "card";
         public static final String _CREATE =
                 "create table "+_TABLENAME+"("
                         +_ID+" integer primary key autoincrement, "
                         +KEYWORD.get(0)+" text not null, "
+                        +KEYWORD.get(1)+" text not null, "
+                        +KEYWORD.get(2)+" text not null, "
+                        +KEYWORD.get(3)+" text not null, "
+                        +KEYWORD.get(4)+" text not null, "
                         +IMAGE+" blob not null, "
                         +NICKNAME+" text not null, "
                         +ONOFF+" text not null, "

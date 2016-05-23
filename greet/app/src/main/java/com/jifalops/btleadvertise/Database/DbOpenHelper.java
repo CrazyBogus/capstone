@@ -78,12 +78,22 @@ public class DbOpenHelper {
         mDB = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("id", 1);
-        values.put("keyword1", keyword.get(1));
+        values.put("keyword1", keyword.get(0));
+        values.put("keyword2", keyword.get(1));
+        values.put("keyword3", keyword.get(2));
+        values.put("keyword4", keyword.get(3));
+        values.put("keyword5", keyword.get(4));
         values.put("image", image);
         values.put("nickname", nickname);
-        //values.put("onoff", onoff);
+        values.put("onoff1", onoff.get(0));
+        values.put("onoff2", onoff.get(1));
+        values.put("onoff3", onoff.get(2));
+        values.put("onoff4", onoff.get(3));
+        values.put("onoff5", onoff.get(4));
         values.put("phonenumber", phonenumber);
-        values.put("sns", sns.get(0));
+        values.put("sns1", sns.get(0));
+        values.put("sns2", sns.get(1));
+        values.put("sns3", sns.get(2));
         values.put("status", status);
 
         Log.d("In my_profile_insert : ", "keyword1 : "+keyword+
@@ -113,6 +123,12 @@ public class DbOpenHelper {
         result.close();
     }
 
+    // Data 삭제
+    public void my_profile_remove(int index){
+        String tableName = "card";
+        String sql = "delete from " + tableName + " where id = "+index+";";
+        mDB.execSQL(sql);
+    }
 
     public void close(){
         mDB.close();
