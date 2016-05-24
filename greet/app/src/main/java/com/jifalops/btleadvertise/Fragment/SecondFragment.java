@@ -58,24 +58,12 @@ public class SecondFragment extends Fragment {
 //        adapter.notifyDataSetChanged();
     }
 
-    // Store instance variables based on arguments passed
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        test = getArguments().getParcelable("bm");
-
         // Adapter 생성
         adapter = new MyCardAdapter() ;
-
-//        adapter.addItem(test);
-//        // 첫 번째 아이템 추가.
-//        adapter.addItem(ContextCompat.getDrawable(getActivity(), R.drawable.test1),
-//                "Box", "Account Box Black 36dp") ;
-//        // 두 번째 아이템 추가.
-//        adapter.addItem(ContextCompat.getDrawable(getActivity(), R.drawable.my_profile_preview),
-//                "Circle", "Account Circle Black 36dp") ;
-
 
     }
 
@@ -113,11 +101,11 @@ public class SecondFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //여기서 명함 삭제 구현 예정 몇번째 명함인지를 알아야 지울 수 있음..!!
-                                Log.d("곧 삭제할 예정입니다.", "기다려주세요");
                                 mDbOpenHelper = new DbOpenHelper(getActivity());
                                 mDbOpenHelper.open();
+                               // mDbOpenHelper.my_profile_remove(position);
                                 Log.d("In LongClickListener : ", "Position 값 : " + Integer.toString(position));
-                                //mDbOpenHelper.my_profile_remove(position);
+
 
                             }
                         })

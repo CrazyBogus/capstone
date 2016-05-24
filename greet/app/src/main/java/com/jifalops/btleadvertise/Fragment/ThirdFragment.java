@@ -1,13 +1,20 @@
 package com.jifalops.btleadvertise.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.jifalops.btleadvertise.Activity.Login;
+import com.jifalops.btleadvertise.Activity.See_Other;
 import com.jifalops.btleadvertise.R;
 
 /**
@@ -17,7 +24,7 @@ public class ThirdFragment extends Fragment {
     // Store instance variables
     private String title;
     private int page;
-    ImageButton btn_login;
+
 
     // newInstance constructor for creating fragment with arguments
     public static ThirdFragment newInstance(int page, String title) {
@@ -48,8 +55,6 @@ public class ThirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_third, container, false);
-        TextView tvLabel = (TextView) view.findViewById(R.id.tvLabel3);
-        tvLabel.setText(page + " -- " + title);
 
 
         return view;

@@ -76,7 +76,7 @@ public class FirstFragment extends Fragment {
     private ArrayList<User_Info> User_Data;
 
 
-    private int use_bit = 30;
+    private int use_bit = 15;
     private int value=0;
     private static final int REQUEST_ENABLE_BT = 1;
     private static String kakaoid=null;
@@ -245,7 +245,7 @@ public class FirstFragment extends Fragment {
 
         if(flag_Timer) {
             //use_bit 깎는 타이머 및 리스트에서 제거
-            timer1 = new CountDownTimer(200 * 1000, 1000) {
+            timer1 = new CountDownTimer(200 * 1000, 3000) {
                 @Override
                 public void onTick(long millisUntilFinished) { // 총 시간과 주기
                     value++;
@@ -320,7 +320,7 @@ public class FirstFragment extends Fragment {
 
 //
         }
-        //배치(무더기데이터가 올때
+        //배치(무더기데이터가 올때)
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
             ScanResult result = null;
@@ -503,7 +503,7 @@ public class FirstFragment extends Fragment {
         //데이터 존재하면
         else if((user_list.check_exist(device_name)) == 1){
             Log.d("여기 들어오나","aaaaa");
-            User1.Setuse_bit(50);
+            User1.Setuse_bit(3);
             User1.Getuse_bit();
             Log.d("GetUse_bit : ", Integer.toString(User1.Getuse_bit()));
             //Log.d("여기 들어오나","bbbbb");

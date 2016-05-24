@@ -67,7 +67,9 @@ import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
  */
 public class Add_Profile extends ActionBarActivity implements View.OnClickListener {
     private File f;
+    private File e;
     private File copy_file;
+    private File coffee_file;
     private File original_file;
     private ImageView my_profile_image;
     private ImageView btn_edit_profile_image;
@@ -111,6 +113,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
     private boolean onoff5=true;
     private boolean flag_photo = true;
     private String full_path;
+    private String second_path;
     private ArrayList<String> onoff = new ArrayList<String>();
     int card_number = 1;
     private String ttemp;
@@ -254,11 +257,12 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         onoff_4.setImageResource(R.drawable.my_profile_toggle_on);
         onoff_5.setImageResource(R.drawable.my_profile_toggle_on);
        if(onoff.size()==0) {
-           onoff.add(null);
-           onoff.add(null);
-           onoff.add(null);
-           onoff.add(null);
-           onoff.add(null);
+           onoff.add(0,"1");
+           onoff.add(1,"1");
+           onoff.add(2,"1");
+           onoff.add(3,"1");
+           onoff.add(4,"1");
+           Log.d("In onoff : ", " 온오프 추가");
        }
     }
 
@@ -275,22 +279,18 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-//
-
         if (id == R.id.item_edit_complete) {
 
             Intent newActivity = new Intent(Add_Profile.this, MainActivity.class);
             //여기서 프로필을 추가해준다.
-
-
             //이름과 사진은 필수로
             if ( Tv_name.getText().toString().length() != 0 && photo != null) {
                 //비트맵 바이트로 변환
                 // 출력 스트림 생성, 압축, 바이트 어래이로 변환
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
+
 
 
                 byte[] imageInByte = stream.toByteArray();
@@ -320,24 +320,9 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 mDbOpenHelper = new DbOpenHelper(this);
                 mDbOpenHelper.open();
 
-//                mDbOpenHelper.my_profile_insert(keyword,imageInByte, nickname, onoff, phonenumber, sns,status);
-  //              Log.d("In Add_profile : ", "성공적으로 DB input");
+                mDbOpenHelper.my_profile_insert(keyword,imageInByte, nickname, onoff, phonenumber, sns,status);
     //            mDbOpenHelper.select();
                 serverConnect(card_number, nickname, phonenumber,keyword,sns,onoff,status,2);
-                //card_number++;
-                //json :{	id,
-//                card_number
-//            nickname
-//                    phone_number
-//            keyword (배열, 각키워드앞에 #이 붙음)
-//            sns_list  (배열)
-//            on_off (size 5개배열 0: card 1 :phone_number 2: status_message 3: sns 4: video )
-//            status_message
-//            image_size (유저가 5개 올릴 경우 main까지 6을 보내주셔야되요)
-//        }
-//
-
-                // ArrayList<String> keyword, String image, String nickname, String onoff, String phonenumber, ArrayList<String> sns, String status)
 
             }
             if(photo != null) {
@@ -360,11 +345,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                         })
                         .show();
             }
-
-
-
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -417,12 +398,13 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
                 }
                 full_path = mTempImageUri.getPath();
+                second_path = getImagePath.getPath();
               //  getImagePath = mTempImageUri;
                 Log.d("Path : " , full_path);
             //     임시 파일 삭제
 
                 f = new File(full_path);
-
+                e = new File(second_path);
 
 
                   break;
@@ -435,13 +417,13 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
                 mTempImageUri = data.getData();
                 original_file = getImageFile(mTempImageUri);
-
+                getImagePath = createSaveCropFile1();
                 mTempImageUri = createSaveCropFile();
                 copy_file = new File(mTempImageUri.getPath());
-
+                coffee_file = new File(getImagePath.getPath());
                 // SD카드에 저장된 파일을 이미지 Crop을 위해 복사한다.
                 copyFile(original_file , copy_file);
-
+                copyFile(original_file, coffee_file);
             }
 
             case PICK_FROM_CAMERA:
@@ -472,21 +454,11 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
      */
     private void doTakePhotoAction()
     {
-    /*
-     * 참고 해볼곳
-     * http://2009.hfoss.org/Tutorial:Camera_and_Gallery_Demo
-     * http://stackoverflow.com/questions/1050297/how-to-get-the-url-of-the-captured-image
-     * http://www.damonkohler.com/2009/02/android-recipes.html
-     * http://www.firstclown.us/tag/android/
-     */
         flag_photo = true;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
         // 임시로 사용할 파일의 경로를 생성
         String url = "1.jpg";
         mTempImageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
-
-
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mTempImageUri);
         // 특정기기에서 사진을 저장못하는 문제가 있어 다음을 주석처리 합니다.
         //intent.putExtra("return-data", true);
@@ -636,16 +608,6 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     }
 
-
-//    //인텐트 받아왔을 때.. 근데 이거 있으면 onStart 호출 불가
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        setIntent(intent);
-//
-//
-//
-//
-//    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -673,64 +635,39 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         RequestParams param2 = new RequestParams();
         param2.setForceMultipartEntityContentType(true);
 
-        File file1;
+        File file1, file2;
         file1 = f;
-       // Log.d("file name : ", file1.getName());
+        file2 = e;
 
         client.addHeader("Accept", "*/*");
         client.setMaxRetriesAndTimeout(3, 30000);
         client.setUserAgent("android-async-http-1.4.9");
-
-        //   Log.d("File Info : ", file1.getPath());
-
         if(kakaoID==null) kakaoID="1234";
 
-
-
-        Log.d("Temp Info : ", temp.toString() + " " +Integer.toString(temp.length));
         try {
-
-
             param2.put("id", kakaoID);
             param2.put("card_number",card_number);
             param2.put("nickname",nickname);
             param2.put("phone_number",phonenumber);
             param2.put("keyword",keyword);
             param2.put("sns_list",sns);
-          //param2.put("on_off",onoff);
+            param2.put("on_off",onoff);
             param2.put("status_message",status);
             param2.put("image_size",image_size);
             param2.put("picture", file1);
-
+            param2.put("picture", file2);
         } catch(FileNotFoundException e) {e.printStackTrace();}
 
-        Log.d("In serverconnect : ", "here11");
         client.post(mContext, url, param2, new JsonHttpResponseHandler() {
-
-            //
-
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-                // Root JSON in response is an dictionary i.e { "data : [ ... ] }
-                // Handle resulting parsed JSON response here
-                Log.d("In Add_Profile : ", response.toString());
                 try {
-
                      String connect_result = response.getString("result");
                     Log.d("result : ", connect_result);
+                } catch (JSONException e) {}
 
-
-
-
-
-                } catch (JSONException e) {
-
-                }
-//
-
-
-            }
+                    }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
@@ -743,25 +680,16 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 
     }
 
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        startManagingCursor(cursor);
-        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(columnIndex);
-    }
-
     public void Getonoff(int i)
     {
         int tempOnoff = i;
         Log.d("온오프값을 받았습니다.", Integer.toString(tempOnoff));
         if(onoff.size()==0) {
-            onoff.add(0,null);
-            onoff.add(1,null);
-            onoff.add(2,null);
-            onoff.add(3,null);
-            onoff.add(4,null);
+            onoff.add(0,"1");
+            onoff.add(1,"1");
+            onoff.add(2,"1");
+            onoff.add(3,"1");
+            onoff.add(4,"1");
             onoff.set(0,Integer.toString(tempOnoff));
         }
 
@@ -783,7 +711,16 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
         return uri;
     }
-
+    /**
+     * Crop된 이미지가 저장될 파일을 만든다.
+     * @return Uri
+     */
+    private Uri createSaveCropFile1(){
+        Uri uri;
+        String url = "main.jpg";
+        uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+        return uri;
+    }
 
     /**
      * 선택된 uri의 사진 Path를 가져온다.

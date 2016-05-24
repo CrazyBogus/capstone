@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 
+import com.jifalops.btleadvertise.Functional.Splash;
 import com.jifalops.btleadvertise.R;
 import com.kakao.auth.*;
 import com.kakao.usermgmt.UserManagement;
@@ -41,6 +42,7 @@ public class Login extends Activity {
     RelativeLayout mainLayout;
     ImageView img_bg;
     Context context;
+    private boolean falg_logout = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +51,12 @@ public class Login extends Activity {
 
 
         img_bg = (ImageView) findViewById(R.id.img_bg);
-        img_bg.setImageResource(R.drawable.login_bg);
-        /**카카오톡 로그아웃 요청**/
-        //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
-        //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
-        UserManagement.requestLogout(new LogoutResponseCallback() {
-            @Override
-            public void onCompleteLogout() {
-
-                //로그아웃 성공 후 하고싶은 내용 코딩 ~
-            }
-        });
 
 
-//        callback = new SessionCallback();
-//        Session.getCurrentSession().addCallback(callback);
+
+
+        callback = new SessionCallback();
+        Session.getCurrentSession().addCallback(callback);
 
 
         btn_login = (ImageButton) findViewById(R.id.login_imageButton);
@@ -77,74 +70,40 @@ public class Login extends Activity {
             }
         });
 
+        Intent intent = getIntent();
+        if(intent.hasExtra("flag"))
+        {
+            falg_logout = false;
 
-        editText_login_name = (EditText) findViewById(R.id.login_name);
-        editText_login_name.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        }
 
-                editText_login_name.setHint("");
-            }
-        });
+        if(!falg_logout) {
+            /**카카오톡 로그아웃 요청**/
+            //한번 로그인이 성공하면 세션 정보가 남아있어서 로그인창이 뜨지 않고 바로 onSuccess()메서드를 호출합니다.
+            //테스트 하시기 편하라고 매번 로그아웃 요청을 수행하도록 코드를 넣었습니다 ^^
+            UserManagement.requestLogout(new LogoutResponseCallback() {
+                @Override
+                public void onCompleteLogout() {
+
+                    Log.d("로그아웃 성공!","!");
 
 
-        mainLayout = (RelativeLayout) findViewById(R.id.login);
 
-        mainLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(editText_login_name.getWindowToken(), 0);
-                editText_login_name.setHint("이를을 입력해주세요");
-                editText_login_name.getHint();
-            }
-        });
+                }
+            });
+        }
+        else
+        {
+            Log.d("로그아웃 안해~ 어 에러","123");
+        }
+
 
     }
         @Override
         protected void onDestroy() {
             super.onDestroy();
-         // img_bg.setImageDrawable(null);
+
        }
-//
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
-//            return;
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        Session.getCurrentSession().removeCallback(callback);
-//    }
-//
-//    private class SessionCallback implements ISessionCallback {
-//
-//        @Override
-//        public void onSessionOpened() {
-//            redirectSignupActivity();  // 세션 연결성공 시 redirectSignupActivity() 호출
-//        }
-//
-//        @Override
-//        public void onSessionOpenFailed(KakaoException exception) {
-//            if(exception != null) {
-//                Logger.e(exception);
-//            }
-//            setContentView(R.layout.login); // 세션 연결이 실패했을때
-//        }                                            // 로그인화면을 다시 불러옴
-//    }
-//
-//    protected void redirectSignupActivity() {       //세션 연결 성공 시 SignupActivity로 넘김
-//        final Intent intent = new Intent(this, MainActivity.class);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//        startActivity(intent);
-//        finish();
-//    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //간편로그인시 호출 ,없으면 간편로그인시 로그인 성공화면으로 넘어가지 않음
@@ -177,21 +136,6 @@ public class Login extends Activity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         finish();
-    }
-    private void getAppKeyHash() {
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String something = new String(Base64.encode(md.digest(), 0));
-                Log.d("Hash key", something);
-            }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            Log.e("name not found", e.toString());
-        }
     }
 }
 

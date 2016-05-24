@@ -70,15 +70,9 @@ public class kakaoSignupActivity extends Activity {
 
     private void redirectMainActivity(String kakaoID, String kakaoNickname) {
         Intent intent = new Intent(this, MainActivity.class);
-
-
         intent.putExtra("kakaoID", kakaoID);
         intent.putExtra("kakaoNICKNAME", kakaoNickname);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        Bundle b = new Bundle();
-//        b.putString("kakaoID", kakaoID); //Your id
-//        b.putString("kakaoNICKNAME", kakaoNickname); //Your id
-//        intent.putExtras(b); //Put your id to your next Intent
         startActivity(intent);
         finish();
     }
