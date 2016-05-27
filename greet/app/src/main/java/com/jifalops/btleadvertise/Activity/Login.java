@@ -3,33 +3,20 @@ package com.jifalops.btleadvertise.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-
-import com.jifalops.btleadvertise.Functional.Splash;
 import com.jifalops.btleadvertise.R;
-import com.kakao.auth.*;
+import com.kakao.auth.ISessionCallback;
+import com.kakao.auth.Session;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
-
-import java.security.MessageDigest;
 
 /**
  * Created by client on 2016. 4. 10..
@@ -49,32 +36,16 @@ public class Login extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-
         img_bg = (ImageView) findViewById(R.id.img_bg);
-
-
-
 
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
 
 
-        btn_login = (ImageButton) findViewById(R.id.login_imageButton);
-
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent newActivity = new Intent(Login.this, MainActivity.class);
-
-                startActivity(newActivity);
-            }
-        });
-
         Intent intent = getIntent();
         if(intent.hasExtra("flag"))
         {
             falg_logout = false;
-
         }
 
         if(!falg_logout) {
@@ -84,11 +55,7 @@ public class Login extends Activity {
             UserManagement.requestLogout(new LogoutResponseCallback() {
                 @Override
                 public void onCompleteLogout() {
-
                     Log.d("로그아웃 성공!","!");
-
-
-
                 }
             });
         }

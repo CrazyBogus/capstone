@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.ParcelUuid;
 import android.support.v4.app.Fragment;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,7 +31,7 @@ import android.widget.Toast;
 
 import com.jifalops.btleadvertise.Activity.See_Other;
 import com.jifalops.btleadvertise.Adapters.UserInfoAdapter;
-import com.jifalops.btleadvertise.Functional.My_Info;
+import com.jifalops.btleadvertise.Database.DbOpenHelper;
 import com.jifalops.btleadvertise.Functional.User_Info;
 import com.jifalops.btleadvertise.Functional.User_List;
 import com.jifalops.btleadvertise.R;
@@ -46,8 +45,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
@@ -59,29 +56,27 @@ import cz.msebera.android.httpclient.extras.Base64;
 public class FirstFragment extends Fragment {
     // Store instance variables
 
-
+    private DbOpenHelper mDbOpenHelper;
     private BluetoothManager btManager;
     private BluetoothAdapter btAdapter;
     private TextView textView;
     private List<ScanFilter> filters;
     Context mContext;
-    ParcelUuid App_UUID = new ParcelUuid(UUID.fromString("20112018-0000-1000-8000-00805f9b34fb"));
+    ParcelUuid App_UUID = new ParcelUuid(UUID.fromString("20112017-0000-1000-8000-00805f9b34fb"));
     /* 유저리스트뷰 설정 */
-
     private ListView userList;
     private UserInfoAdapter adapter;
     private User_List user_list = new User_List();
     private User_Info User1 = new User_Info();
     // 리스트 아이템 데이터를 저장할 배열
     private ArrayList<User_Info> User_Data;
-
-
     private int use_bit = 15;
     private int value=0;
     private static final int REQUEST_ENABLE_BT = 1;
     private static String kakaoid=null;
+    private static String kakaonickname=null;
     private String copy_device_name;
-    private ArrayList<String> keyword;
+    private ArrayList<String> keyword = new ArrayList<String>();
     private boolean flag_Timer;
 
     private CountDownTimer timer1;
@@ -90,15 +85,21 @@ public class FirstFragment extends Fragment {
     private ImageView Iv_interest;
     private boolean flag_search = true;
 
-
     // newInstance constructor for creating fragment with arguments
-    public static FirstFragment newInstance(int page, String title) {
+    public static FirstFragment newInstance(int page, String title, String nickname) {
         FirstFragment fragmentFirst = new FirstFragment();
         //고유값을 위해 kakaoId 가져오기
-        if(title != null)
-        kakaoid = title;
-
+        if(title != null && nickname != null) {
+            kakaoid = title;
+            kakaonickname = nickname;
+        }
         return fragmentFirst;
+    }
+
+    public void getkeyword(ArrayList<String> keyword1)
+    {
+        keyword.addAll(keyword1);
+        Log.d("Keyword : ", keyword.toString());
     }
 
     // Store instance variables based on arguments passed
@@ -106,10 +107,20 @@ public class FirstFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         btManager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
         // Adapter 생성
         adapter = new UserInfoAdapter(getActivity());
         flag_Timer = true;
+        btAdapter = btManager.getAdapter();
+        if (btAdapter == null || !btAdapter.isEnabled()) {
+            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT);
+            return;
+        }
+        if(kakaoid != null)
+            btAdapter.setName(kakaoid);
+        else{btAdapter.setName("itsnotakakaoid");}
+        Log.d("On resume 내에서 : ", "Adapter이름"+btAdapter.getName());
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -124,7 +135,7 @@ public class FirstFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 // 보낼 데이터 생성
-                String name = "asdasd";
+                String name = "testName";
                 // 화면전환하는 객체 선언
                 Intent intent = new Intent().setClass(getActivity(), See_Other.class);
                 // 데이터 넘김
@@ -134,6 +145,18 @@ public class FirstFragment extends Fragment {
             }
         });
 
+        mDbOpenHelper = new DbOpenHelper(getActivity());
+        mDbOpenHelper.open();
+
+        if(!keyword.isEmpty()) {
+            mDbOpenHelper.my_info_insert(kakaoid, kakaonickname, keyword);
+            mDbOpenHelper.my_info_selectAll("my_info");
+            Log.d("여기 들어온다","키워드까지 인설트");
+        }
+        else
+        {
+            Log.d("여기 들어온다","디비 인설트 실패");
+        }
 
         Iv_interest = (ImageView) view.findViewById(R.id.Iv_interest);
         Iv_random = (ImageView) view.findViewById(R.id.Iv_random);
@@ -142,17 +165,24 @@ public class FirstFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(getActivity(), "Clicked Interest", Toast.LENGTH_SHORT).show();
                 Iv_random.setImageResource(R.drawable.near_random2);
                 Iv_interest.setImageResource(R.drawable.near_interests2);
 
+//                Bundle extra = getArguments();
+//                if(extra != null) {
+//                    keyword = extra.getStringArrayList("keyword");
+//                    Log.d("1_Fragment_keyword : ", "1 : " + keyword.get(0) + " 2 : " + keyword.get(1));
+//                }
 
-                Bundle extra = getArguments();
-                if(extra != null) {
-                    keyword = extra.getStringArrayList("keyword");
-                    Log.d("keyword : ", "1 : " + keyword.get(0) + " 2 : " + keyword.get(1));
+                Log.d("Iv_interest", "keyword : " + keyword.toString());
+
+                user_list = new User_List();
+                flag_search = false;
+                int count = adapter.getCount();
+                for(int i = 0; i<count; i++) {
+                    adapter.remove(adapter.getItem(i));
                 }
-                flag_search = true;
+                adapter.notifyDataSetChanged();
             }
         });
         Iv_random.setOnClickListener(new View.OnClickListener()
@@ -160,25 +190,18 @@ public class FirstFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Toast.makeText(getActivity(), "Clicked Random", Toast.LENGTH_SHORT).show();
                 Iv_random.setImageResource(R.drawable.near_random);
                 Iv_interest.setImageResource(R.drawable.near_interests);
-                flag_search = false;
+                user_list = new User_List();
+                flag_search = true;
+                int count = adapter.getCount();
+                for(int i = 0; i<count; i++) {
+                    adapter.remove(adapter.getItem(i));
+                }
+                adapter.notifyDataSetChanged();
             }
         });
 
-
-//        Bundle extra = getArguments();
-
-
-
-//
-//        keyword = extra.getStringArrayList("keyword");
-//        Log.d("Keyword Information : ", keyword.get(0)+" "+ keyword.get(1) + " " + keyword.get(2)+ " " + keyword.get(3)+ " " + keyword.get(4));
-
-      //  mText=(TextView) view.findViewById(R.id.text);
-      //  mText1=(TextView) view.findViewById(R.id.text1);
-      //  mText.setText("asdasdasdasd");
         return view;
     }
 
@@ -201,18 +224,6 @@ public class FirstFragment extends Fragment {
         //유저 객체 생성
         User1 = new User_Info();
 
-
-        btAdapter = btManager.getAdapter();
-        if (btAdapter == null || !btAdapter.isEnabled()) {
-            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT);
-            return;
-        }
-
-        if(kakaoid != null)
-        btAdapter.setName(kakaoid);
-        else{btAdapter.setName("hi");}
-
-        Log.d("On resume 내에서 : ", "Adapter이름"+btAdapter.getName());
 
 
         AdvertiseSettings.Builder settings = new AdvertiseSettings.Builder();
@@ -330,18 +341,26 @@ public class FirstFragment extends Fragment {
             for (int i = 0; i < results.size(); i++) {
                 result = results.get(i);
                 device_name = result.getScanRecord().getDeviceName();
-                if(flag_search) {
+                if(!flag_search) {
                     Log.d("관심사 별 검색 시작", "시작!");
-                    serverConnect_interest(device_name, keyword);
+                    Log.d("device_name : ",device_name);
+//                    Log.d("device_name : ",keyword.toString());
+                    adapter.notifyDataSetChanged();
+
+                    if((device_name != null) && (keyword != null)) {
+                        Log.d("In if statement : ", keyword.toString());
+
+                        serverConnect_interest(device_name, keyword);
+                    }
                 }
-                else if(!flag_search) {
+                else if(flag_search) {
                     Log.d("무작위 검색 시작", "시작!");
-                    serverConnect_random(device_name);
+                    adapter.notifyDataSetChanged();
+                    if(device_name!=null) {
+                        serverConnect_random(device_name);
+                    }
                 }
             }
-
-
-
         }
 
         ;
@@ -363,7 +382,7 @@ public class FirstFragment extends Fragment {
             Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
 
             //HTTP 통신
-            String url = "http://52.69.46.152:8001/api/find_members/random";
+            String url = "http://52.69.46.152:8000/api/find_members/random";
             AsyncHttpClient client = new AsyncHttpClient();
             RequestParams param2 = new RequestParams();
 
@@ -389,12 +408,12 @@ public class FirstFragment extends Fragment {
 
                         final String name = response.getString("nickname");
                         final String image_str = response.getString("profile_picture");
-                        byte[] bytePlainOrg = Base64.decode(image_str, 0);
-                        //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
-                        ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
-                        final Bitmap bm = BitmapFactory.decodeStream(inStream);
+//                        byte[] bytePlainOrg = Base64.decode(image_str, Base64.DEFAULT);
+//                        //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
+//                        ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
+                    final Bitmap bm = StringToBitMap(image_str);
 
-
+                        Log.d("asdasdasdasd", bm.getRowBytes()+"");
                         //어뎁터에 유저 객체 넣기
                         adapter.add(User1);
                         //객체에 이미지 넣기
@@ -403,7 +422,7 @@ public class FirstFragment extends Fragment {
                         //객체에 아이디 넣기
                         User1.SetId(name);
                         User1.GetId();
-                        User1.Setuse_bit(40);
+                        User1.Setuse_bit(5);
                         User1.Getuse_bit();
 
 
@@ -429,7 +448,7 @@ public class FirstFragment extends Fragment {
         //데이터 존재하면
         else if((user_list.check_exist(device_name)) == 1){
             Log.d("여기 들어오나","aaaaa");
-            User1.Setuse_bit(50);
+            User1.Setuse_bit(5);
             User1.Getuse_bit();
             Log.d("GetUse_bit : ", Integer.toString(User1.Getuse_bit()));
             //Log.d("여기 들어오나","bbbbb");
@@ -449,14 +468,14 @@ public class FirstFragment extends Fragment {
 
     public void serverConnect_interest(String device_name, ArrayList<String> keyword)
     {
-        Log.d("In SC_Random : ", "Success");
+        Log.d("In SC_Interest : ", "Success");
         //검색 된 기기가 유저리스트에 없어야지만 http 통신을 한다. 이때 체크리스트 함수를 부를 때 만약 없으면 add해주기 때문에 결국엔 check가 됨.
         if (user_list.check_exist(device_name)==2) {
             Log.d("user name : ", device_name);
             Log.d("adapter 갯수 : ", Integer.toString(adapter.getCount()));
 
             //HTTP 통신
-            String url = "http://52.69.46.152:8001/api/find_members/random";
+            String url = "http://52.69.46.152:8000/api/find_members/interest";
             AsyncHttpClient client = new AsyncHttpClient();
             RequestParams param2 = new RequestParams();
 
@@ -478,7 +497,25 @@ public class FirstFragment extends Fragment {
 
                     try {
 
-                       String a = response.getString("nickname");
+                        final String name = response.getString("nickname");
+                        final String image_str = response.getString("profile_picture");
+//                        byte[] bytePlainOrg = Base64.decode(image_str, Base64.DEFAULT);
+//                        //byte[] 데이터  stream 데이터로 변환 후 bitmapFactory로 이미지 생성
+//                        ByteArrayInputStream inStream = new ByteArrayInputStream(bytePlainOrg);
+                        final Bitmap bm = StringToBitMap(image_str);
+
+
+                        //어뎁터에 유저 객체 넣기
+                        adapter.add(User1);
+                        //객체에 이미지 넣기
+                        User1.SetImage(bm);
+                        User1.GetImage();
+                        //객체에 아이디 넣기
+                        User1.SetId(name);
+                        User1.GetId();
+                        User1.Setuse_bit(5);
+                        User1.Getuse_bit();
+
 
 
                     } catch (JSONException e) {
@@ -521,7 +558,18 @@ public class FirstFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-
+    public Bitmap StringToBitMap(String encodedString){
+        try{
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 2;
+            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length,options);
+            return bitmap;
+        }catch(Exception e){
+            e.getMessage();
+            return null;
+        }
+    }
 
 
 }

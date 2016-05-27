@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class DbOpenHelper {
     private static final String DATABASE_NAME = "intercard.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 17;
     public static SQLiteDatabase mDB;
     private DatabaseHelper mDBHelper;
     private Context mCtx;
@@ -60,24 +60,29 @@ public class DbOpenHelper {
         return this;
     }
 
-    public void my_info_insert(String id, String nickname)
+    public void my_info_insert(String id, String nickname, ArrayList<String> keyword)
     {
         mDB = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         Log.d("In my_info_insert : ", "id : "+id+" nickname : "+nickname);
         values.put("nickname", nickname);
         values.put("userid", id);
+        values.put("keyword1", keyword.get(0));
+        values.put("keyword2", keyword.get(1));
+        values.put("keyword3", keyword.get(2));
+        values.put("keyword4", keyword.get(3));
+        values.put("keyword5", keyword.get(4));
 
 
         mDB.insert("my_info",null,values);
     }
 
 
-    public void my_profile_insert(ArrayList<String> keyword, byte[] image, String nickname, ArrayList<String> onoff, String phonenumber, ArrayList<String> sns, String status)
+    public void my_profile_insert(int card_number, ArrayList<String> keyword, byte[] image, String nickname, ArrayList<String> onoff, String phonenumber, ArrayList<String> sns, String status)
     {
         mDB = mDBHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("id", 1);
+        values.put("id", card_number);
         values.put("keyword1", keyword.get(0));
         values.put("keyword2", keyword.get(1));
         values.put("keyword3", keyword.get(2));
@@ -106,27 +111,61 @@ public class DbOpenHelper {
         mDB.insert("card",null,values);
     }
 
-    public void select()
-    {
-        String sql = "select * from card where id = 2;";
-        Cursor result = mDB.rawQuery(sql, null);
+    // 모든 Data 읽기
+    public void my_info_selectAll(String tableName){
+        String sql = "select * from " + tableName + ";";
+        Cursor results = mDB.rawQuery(sql, null);
 
-        // result(Cursor 객체)가 비어 있으면 false 리턴
-        if(result.moveToFirst()){
-            String voca = result.getString(1);
-            String vocal = result.getString(4);
-            Log.d("In select : ", voca + " " +vocal);
+        results.moveToFirst();
+
+        while(!results.isAfterLast()){
+            int id = results.getInt(0);
+            String voca = results.getString(1);
+            String v2 = results.getString(2);
+            String v3 = results.getString(3);
+            String v4 = results.getString(4);
+            String v5 = results.getString(5);
+
+            String v7 = results.getString(7);
+            Log.d("test","index= "+id+" voca="+voca+" voca="+v2+" voca="+v3+" voca="+v4);
+            results.moveToNext();
         }
-        else
-        Log.d("여기에 오는거였다.","ㅋㅋㅋ");
+        results.close();
+    }
 
-        result.close();
+    // 모든 Data 읽기
+    public void my_profile_selectAll(String tableName){
+        String sql = "select * from " + tableName + ";";
+        Cursor results = mDB.rawQuery(sql, null);
+
+        results.moveToFirst();
+
+        while(!results.isAfterLast()){
+            int id = results.getInt(0);
+            String voca = results.getString(1);
+            String v2 = results.getString(2);
+            String v3 = results.getString(3);
+            String v4 = results.getString(4);
+            String v5 = results.getString(5);
+            String v6 = results.getString(6);
+            String v7 = results.getString(7);
+            Log.d("test","index= "+id+" voca="+voca+" voca="+v2+" voca="+v3+" voca="+v4);
+            results.moveToNext();
+        }
+        results.close();
     }
 
     // Data 삭제
     public void my_profile_remove(int index){
         String tableName = "card";
         String sql = "delete from " + tableName + " where id = "+index+";";
+        mDB.execSQL(sql);
+    }
+
+
+    // Table 삭제
+    public void removeTable(String tableName){
+        String sql = "drop table " + tableName;
         mDB.execSQL(sql);
     }
 

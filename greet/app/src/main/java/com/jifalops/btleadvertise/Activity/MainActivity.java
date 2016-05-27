@@ -1,7 +1,6 @@
 package com.jifalops.btleadvertise.Activity;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -10,12 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.jifalops.btleadvertise.Adapters.MainAdapter;
+import com.jifalops.btleadvertise.Card;
 import com.jifalops.btleadvertise.Database.DbOpenHelper;
-import com.jifalops.btleadvertise.Fragment.FirstFragment;
 import com.jifalops.btleadvertise.Functional.Splash;
 import com.jifalops.btleadvertise.R;
 
@@ -32,19 +29,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn_two;
     private Button btn_three;
     private Button btn_four;
-    private LinearLayout layout_actionbar;
     private ImageView add_new_card;
     private ImageView add_interests;
     private ImageView logo;
     private static String kakaoID;
     private static String kakaoNICKNAME;
-
     private static boolean start_flag = true;
-
     private Bitmap bm;
-    private ImageView mImageView;
-
-    private ImageView test_img;
 
 
     ArrayList<String> keyword = new ArrayList<String>();
@@ -57,62 +48,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             start_flag = false;
             finish();
         }
-
-
-
-//        Log.d("bm : ", bm.toString());
-
         setLayout();
 
-
-
-        vpPager = (ViewPager) findViewById(R.id.vpPager);
-
-
-//        Log.d("bmbmbm : ", bm.toString());
-
-        adapterViewPager = new MainAdapter(getSupportFragmentManager());
-        adapterViewPager.setKakaoID(kakaoID);
-
-//        adapterViewPager.setImageView(bm);
-
-
-        vpPager.setAdapter(adapterViewPager);
-
-
-//        Bundle extras = intent.getExtras();
-//        if (extras != null && "element".equals(extras.getString("element"))) {
-//            //원하는 동작
-//        }
-        if(getIntent().hasExtra("bm")) {
-            Log.d("MainActivity : ", "has extra bm");
-            vpPager.setCurrentItem(1);
-        }
 
 
         Intent intent = getIntent();
 
         if(intent.hasExtra("kakaoID")) {
-            Log.d("MainActivity: ", "카카오 정보 가져오기 시도..");
             kakaoID = intent.getStringExtra("kakaoID");
             kakaoNICKNAME = intent.getStringExtra("kakaoNICKNAME");
-//            kakaoID = intent.getExtras().getString("kakaoID");
-//            kakaoNICKNAME = intent.getExtras().getString("kakaoNICKNAME");
             Log.d("MainActivity: ", "카카오 정보 가져오기 성공!");
         }
         else
         {
             Log.d("MainActivity : ","intent가 kakaoID를 가지고 있지 않습니다.");
         }
+
         // Attach the page change listener inside the activity
+        adapterViewPager = new MainAdapter(getSupportFragmentManager(), kakaoID, kakaoNICKNAME);
+        adapterViewPager.setKakaoID(kakaoID);
+
+        vpPager.setAdapter(adapterViewPager);
+
+        if(getIntent().hasExtra("bm")) {
+            Log.d("MainActivity : ", "has extra bm");
+            vpPager.setCurrentItem(1);
+        }
         vpPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             // This method will be invoked when a new page becomes selected.
             @Override
-            public void onPageSelected(int position) {
-                Toast.makeText(MainActivity.this,
-                        position + "번째 페이지입니다", Toast.LENGTH_SHORT).show();
-            }
+            public void onPageSelected(int position) {}
 
             // This method will be invoked when the current page is scrolled
             @Override
@@ -120,30 +86,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 // Code goes here
                 if (position == 0) {
                     btn_one.setBackgroundResource(R.drawable.actionbar_selected_peoplelist);
-                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
-                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_interest);
                     btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.INVISIBLE);
                     add_interests.setVisibility(View.VISIBLE);
                 } else if (position == 1) {
                     btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
-                    btn_two.setBackgroundResource(R.drawable.actionbar_selected_interest);
-                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_selected_editcard);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_interest);
                     btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.VISIBLE);
                     add_interests.setVisibility(View.INVISIBLE);
                 } else if (position == 2) {
                     btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
-                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
-                    btn_three.setBackgroundResource(R.drawable.actionbar_selected_editcard);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_selected_interest);
                     btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
                     add_new_card.setVisibility(View.INVISIBLE);
                     add_interests.setVisibility(View.INVISIBLE);
 
                 } else {
                     btn_one.setBackgroundResource(R.drawable.actionbar_unselected_peoplelist);
-                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_interest);
-                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_two.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+                    btn_three.setBackgroundResource(R.drawable.actionbar_unselected_interest);
                     btn_four.setBackgroundResource(R.drawable.actionbar_selected_option);
                     add_new_card.setVisibility(View.INVISIBLE);
                     add_interests.setVisibility(View.INVISIBLE);
@@ -204,21 +170,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_two = (Button) findViewById(R.id.btn_two);
         btn_three = (Button) findViewById(R.id.btn_three);
         btn_four = (Button) findViewById(R.id.btn_four);
-
+        btn_one.setBackgroundResource(R.drawable.actionbar_selected_peoplelist);
+        btn_two.setBackgroundResource(R.drawable.actionbar_unselected_editcard);
+        btn_three.setBackgroundResource(R.drawable.actionbar_unselected_interest);
+        btn_four.setBackgroundResource(R.drawable.actionbar_unselected_option);
         btn_one.setOnClickListener(this);
         btn_two.setOnClickListener(this);
         btn_three.setOnClickListener(this);
         btn_four.setOnClickListener(this);
 
-       // layout_actionbar = (LinearLayout) findViewById(R.id.layout_actionbar);
-       // layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
         add_new_card = (ImageView) findViewById(R.id.add_new_card);
         add_interests = (ImageView) findViewById(R.id.add_interests);
         logo = (ImageView) findViewById(R.id.logo);
         add_new_card.setImageResource(R.drawable.my_profile_add_new_card);
         add_interests.setImageResource(R.drawable.my_profile_keyword_selection);
         logo.setImageResource(R.drawable.text_logo);
-
+        vpPager = (ViewPager) findViewById(R.id.vpPager);
     }
 
     @Override
@@ -241,62 +208,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setCurrentInflateItem(int type) {
         if (type == 0) {
-            //layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected1);
+            vpPager.setCurrentItem(0);
             add_new_card.setVisibility(View.INVISIBLE);
             add_interests.setVisibility(View.VISIBLE);
-            vpPager.setCurrentItem(0);
         } else if (type == 1) {
-           // layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected2);
-            btn_two.setBackgroundResource(R.drawable.actionbar_selected_interest);
+            vpPager.setCurrentItem(1);
+            btn_two.setBackgroundResource(R.drawable.actionbar_selected_editcard);
             add_new_card.setVisibility(View.VISIBLE);
             add_interests.setVisibility(View.INVISIBLE);
-            vpPager.setCurrentItem(1);
         } else if (type == 2) {
-          //  layout_actionbar.setBackgroundResource(R.drawable.actionbar_selected3);
-            btn_three.setBackgroundResource(R.drawable.actionbar_selected_editcard);
+            vpPager.setCurrentItem(2);
+            btn_three.setBackgroundResource(R.drawable.actionbar_selected_interest);
             add_new_card.setVisibility(View.INVISIBLE);
             add_interests.setVisibility(View.INVISIBLE);
-            vpPager.setCurrentItem(2);
         } else {
+            vpPager.setCurrentItem(3);
             btn_four.setBackgroundResource(R.drawable.actionbar_selected_option);
             add_new_card.setVisibility(View.INVISIBLE);
             add_interests.setVisibility(View.INVISIBLE);
-            vpPager.setCurrentItem(3);
         }
     }
-
-    private View.OnClickListener mPagerListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.btn_one:
-                    Toast.makeText(getApplicationContext(), "btn_0", Toast.LENGTH_SHORT).show();
-                    break;
-
-
-            }
-        }
-    };
 
     //인텐트 받아왔을 때.. 근데 이거 있으면 onStart 호출 불가
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
 
+//        if (intent.hasExtra("bm")) {
+//            Log.d("MainActivity : ", "bm is not null");
+//
+//            bm = intent.getParcelableExtra("bm");
+//            adapterViewPager.setImageView(bm);
+//
+//        } else {
+//            Log.d("MainActivity : ", "bm is null");
+//        }
 
-
-
-        //My_Profile로 부터 비트맵을 가져온다.(카메라 사진)
-//        intent = getIntent();
-
-        if (intent.hasExtra("bm")) {
-            Log.d("MainActivity : ", "bm is not null");
-
-            bm = intent.getParcelableExtra("bm");
-            adapterViewPager.setImageView(bm);
-
-        } else {
-            Log.d("MainActivity : ", "bm is null");
+        if (intent.hasExtra("card")) {
+            adapterViewPager.setCardItem((Card) intent.getParcelableExtra("card"));
         }
 
         if(intent.hasExtra("keyword"))
@@ -308,15 +257,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("In mainActivity : " , keyword.get(3));
             Log.d("In mainActivity : " , keyword.get(4));
 
-            FirstFragment frament = new FirstFragment();
-            Bundle bundle = new Bundle();
-            bundle.putStringArrayList("keyword", keyword);
-            frament.setArguments(bundle);
+//            FirstFragment fragment = new FirstFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putStringArrayList("keyword", keyword);
+//            fragment.setArguments(bundle);
+
+            adapterViewPager.getFirstFragment().getkeyword(keyword);
         }
-
-//        Log.d("사진", bm.toString());
-//        Log.d("kakaoId : ", kakaoID);
-
 
     }
     @Override
@@ -326,7 +273,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         add_new_card.setImageDrawable(null);
         add_interests.setImageDrawable(null);
     }
-
-
 
 }

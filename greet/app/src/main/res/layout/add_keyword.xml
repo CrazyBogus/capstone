@@ -234,58 +234,465 @@
         </RelativeLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/category_2"
             android:orientation="vertical"
             >
+            <TextView
+                android:id="@+id/living_2"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="60dp"
+                android:layout_centerHorizontal="true"
+                android:text="#음식"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
 
-        </LinearLayout>
-        <LinearLayout
+            <TextView
+                android:id="@+id/living_1"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginRight="15dp"
+                android:text="#요리"
+                android:layout_toLeftOf="@id/living_2"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_3"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="60dp"
+                android:layout_toRightOf="@id/living_2"
+                android:text="#건"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_5"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/living_2"
+                android:text="#뷰티"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_4"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#육아"
+                android:layout_toLeftOf="@id/living_2"
+                android:layout_below="@id/living_1"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_6"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/living_2"
+                android:layout_below="@id/living_3"
+                android:text="#패션"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_8"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/living_5"
+                android:text="#디지털"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_7"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#수면"
+                android:layout_toLeftOf="@id/living_2"
+                android:layout_below="@id/living_4"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_9"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/living_2"
+                android:layout_below="@id/living_6"
+                android:text="#다이어트"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_10"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/living_7"
+                android:text="#애완동물"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/living_11"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toLeftOf="@id/living_10"
+                android:layout_below="@id/living_7"
+                android:text="#자동차"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/category_3"
             android:orientation="vertical"
             >
+            <TextView
+                android:id="@+id/culture_2"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="60dp"
+                android:layout_centerHorizontal="true"
+                android:text="#음악"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
 
-        </LinearLayout>
-        <LinearLayout
+            <TextView
+                android:id="@+id/culture_1"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginRight="15dp"
+                android:text="#영화"
+                android:layout_toLeftOf="@id/culture_2"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_3"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="60dp"
+                android:layout_toRightOf="@id/culture_2"
+                android:text="#무용"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_5"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/culture_2"
+                android:text="#뮤지컬"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_4"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#연극"
+                android:layout_toLeftOf="@id/culture_2"
+                android:layout_below="@id/culture_1"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_6"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/culture_2"
+                android:layout_below="@id/culture_3"
+                android:text="#미술"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_8"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/culture_5"
+                android:text="#종교"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_7"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#독서"
+                android:layout_toLeftOf="@id/culture_2"
+                android:layout_below="@id/culture_4"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_9"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/culture_2"
+                android:layout_below="@id/culture_6"
+                android:text="#심리"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_10"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/culture_7"
+                android:text="#건축"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/culture_11"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toLeftOf="@id/culture_10"
+                android:layout_below="@id/culture_7"
+                android:text="#문학"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/category_4"
             android:orientation="vertical"
             >
+            <TextView
+                android:id="@+id/sports_2"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="70dp"
+                android:layout_centerHorizontal="true"
+                android:text="#축구"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
 
-        </LinearLayout>
-        <LinearLayout
+            <TextView
+                android:id="@+id/sports_1"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="70dp"
+                android:layout_marginRight="15dp"
+                android:text="#야구"
+                android:layout_toLeftOf="@id/sports_2"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/sports_3"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="70dp"
+                android:layout_toRightOf="@id/sports_2"
+                android:text="#농"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/sports_5"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/sports_2"
+                android:text="#골프"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/sports_4"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#배구"
+                android:layout_toLeftOf="@id/sports_2"
+                android:layout_below="@id/sports_1"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/sports_6"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@id/sports_2"
+                android:layout_below="@id/sports_3"
+                android:text="#낚시"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/sports_8"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/sports_5"
+                android:text="#자전거"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/sports_7"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#헬스"
+                android:layout_toLeftOf="@id/sports_2"
+                android:layout_below="@id/sports_4"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+        </RelativeLayout>
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/category_5"
             android:orientation="vertical"
             >
+            <TextView
+                android:id="@+id/hobby_2"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="80dp"
+                android:layout_centerHorizontal="true"
+                android:text="#TV"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
 
-        </LinearLayout>
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="300dp"-->
-            <!--android:background="@drawable/add_keyword_category_sports">-->
+            <TextView
+                android:id="@+id/hobby_1"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginRight="15dp"
+                android:text="#게임"
+                android:layout_toLeftOf="@id/hobby_2"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
 
-        <!--</LinearLayout>-->
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="300dp"-->
-            <!--android:background="@drawable/add_keyword_category_hobby">-->
+            <TextView
+                android:id="@+id/hobby_3"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="80dp"
+                android:layout_toRightOf="@id/hobby_2"
+                android:text="#여행"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
 
-        <!--</LinearLayout>-->
-        <!--<ImageView-->
-            <!--android:layout_width="300dp"-->
-            <!--android:layout_height="300dp"-->
-            <!--android:src="@drawable/add_keyword_category_social"/>-->
-        <!--<ImageView-->
-            <!--android:layout_width="300dp"-->
-            <!--android:layout_height="300dp"-->
-            <!--android:src="@drawable/add_keyword_category_culture"/>-->
+            <TextView
+                android:id="@+id/hobby_5"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/hobby_2"
+                android:text="#연예"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:id="@+id/hobby_4"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:text="#캠핑"
+                android:layout_toLeftOf="@id/hobby_2"
+                android:layout_below="@id/hobby_1"
+                android:gravity="center"
+                android:textColor="#000000"
+                />
+
+        </RelativeLayout>
+
         <Button
             android:layout_width="300dp"
             android:layout_height="80dp"

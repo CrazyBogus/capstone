@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jifalops.btleadvertise.Activity.Login;
+import com.jifalops.btleadvertise.Activity.See_Other;
 import com.jifalops.btleadvertise.Database.DbOpenHelper;
 import com.jifalops.btleadvertise.R;
 
@@ -90,6 +91,8 @@ public class FourthFragment extends Fragment {
 
                         })
                         .show();
+
+
 
             }
         });

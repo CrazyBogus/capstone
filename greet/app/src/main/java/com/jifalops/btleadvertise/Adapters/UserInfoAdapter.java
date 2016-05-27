@@ -101,7 +101,7 @@ public class UserInfoAdapter extends BaseAdapter implements View.OnClickListener
             imgUserIcon = (ImageView) v.findViewById(R.id.user_icon);
             tvUserName = (TextView) v.findViewById(R.id.user_name);
             // tvUserPhoneNumber = (TextView) v.findViewById(R.id.user_phone_number);
-            IsAdded = (ImageButton) v.findViewById(R.id.isSelected_Star);
+          //  IsAdded = (ImageButton) v.findViewById(R.id.isSelected_Star);
 
 
         }
@@ -136,6 +136,7 @@ public class UserInfoAdapter extends BaseAdapter implements View.OnClickListener
     {
         mUserData.remove(user);
     }
+
     public boolean contains(User_Info user)
     {
         if(mUserData.contains(user)) return true;

@@ -1,23 +1,39 @@
 package com.jifalops.btleadvertise.Activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.jifalops.btleadvertise.Activity.Login;
 import com.jifalops.btleadvertise.Activity.MainActivity;
+import com.jifalops.btleadvertise.Database.DbOpenHelper;
 import com.kakao.auth.ErrorCode;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 import com.kakao.util.helper.log.Logger;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by client on 2016. 4. 24..
  */
 public class kakaoSignupActivity extends Activity {
+    private Context mContext;
+    private DbOpenHelper mDbOpenHelper;
     /**
      * Main으로 넘길지 가입 페이지를 그릴지 판단하기 위해 me를 호출한다.
      * @param savedInstanceState 기존 session 정보가 저장된 객체
@@ -69,6 +85,7 @@ public class kakaoSignupActivity extends Activity {
     }
 
     private void redirectMainActivity(String kakaoID, String kakaoNickname) {
+        serverConnect(kakaoID,kakaoNickname);
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("kakaoID", kakaoID);
         intent.putExtra("kakaoNICKNAME", kakaoNickname);
@@ -83,6 +100,57 @@ public class kakaoSignupActivity extends Activity {
 
         startActivity(intent);
         finish();
+    }
+
+    public void serverConnect(String id, String nickname)
+    {
+
+
+        String url = "http://52.69.46.152:8000/api/sign_up";
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams param = new RequestParams();
+        client.addHeader("Accept", "*/*");
+        client.setMaxRetriesAndTimeout(3, 30000);
+        client.setUserAgent("android-async-http-1.4.9");
+        if(id==null)
+        {  //카카오 아이디가 없으면 로그인화면으로 넘어감
+            int flag = 1;
+            // 화면전환하는 객체 선언
+            Intent intent = new Intent().setClass(this, Login.class);
+            // 데이터 넘김
+            intent.putExtra("flag", flag);
+            // 화면 전환 메소드
+            startActivity(intent);
+            Log.d("In SignUp : ", "Kakao Id가 없습니다");
+        }
+
+        try {
+            param.put("id", id);
+            param.put("nickname", nickname);
+        Log.d("id is : ", id+" nickname is : "+nickname);
+
+        } catch(Exception e) {e.printStackTrace();}
+
+        client.post(mContext, url, param, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                try {
+                    String connect_result = response.getString("result");
+                    Log.d("result : ", connect_result);
+                } catch (JSONException e) {}
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String res, Throwable t) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                Log.d("In SignUp : ", "Connection Failed");
+            }
+
+        });
+
+
     }
 
 }

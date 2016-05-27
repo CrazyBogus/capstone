@@ -58,7 +58,7 @@
             android:layout_marginRight="10dip"
             android:layout_marginBottom="15dip"
             android:layout_weight="3"
-            android:background="@drawable/actionbar_selected_peoplelist"/>
+            />
 
         <Button
             android:layout_width="0dp"
@@ -69,7 +69,7 @@
             android:layout_marginRight="10dip"
             android:layout_marginBottom="15dip"
             android:layout_weight="3"
-            android:background="@drawable/actionbar_unselected_interest"/>
+            />
 
         <Button
             android:layout_width="0dp"
@@ -80,7 +80,7 @@
             android:layout_marginRight="10dip"
             android:layout_marginBottom="20dip"
             android:layout_weight="3"
-            android:background="@drawable/actionbar_unselected_editcard"/>
+            />
 
         <Button
             android:layout_width="0dp"
@@ -91,7 +91,7 @@
             android:layout_marginRight="15dip"
             android:layout_marginBottom="30dip"
             android:layout_weight="3"
-            android:background="@drawable/actionbar_unselected_option"/>
+            />
 
     </LinearLayout>
 

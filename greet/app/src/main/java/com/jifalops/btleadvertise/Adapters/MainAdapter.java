@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import com.jifalops.btleadvertise.Card;
 import com.jifalops.btleadvertise.Fragment.FirstFragment;
 import com.jifalops.btleadvertise.Fragment.FourthFragment;
 import com.jifalops.btleadvertise.Fragment.SecondFragment;
@@ -22,11 +23,15 @@ public class MainAdapter extends FragmentPagerAdapter {
     private FirstFragment firstFragment;
     private SecondFragment secondFragment;
 
-    public MainAdapter(FragmentManager fragmentManager) {
+    public MainAdapter(FragmentManager fragmentManager, String kakaoID, String kakaoNICKNAME) {
         super(fragmentManager);
 
-        firstFragment = new FirstFragment();
+        firstFragment = FirstFragment.newInstance(0, kakaoID, kakaoNICKNAME);
         secondFragment = new SecondFragment();
+    }
+
+    public FirstFragment getFirstFragment() {
+        return firstFragment;
     }
 
     public void setKakaoID(String kakaoID) {
@@ -38,6 +43,10 @@ public class MainAdapter extends FragmentPagerAdapter {
 //        SecondFragment.newInstance(1, bm);
         secondFragment.setImage(bm);
         Log.d("MainAdapter : ", "setImageView set 완료");
+    }
+
+    public void setCardItem(Card card) {
+        secondFragment.setItem(card);
     }
     // Returns total number of pages
     @Override
@@ -51,7 +60,7 @@ public class MainAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0: // Fragment # 0 - This will show FirstFragment
 //                return FirstFragment.newInstance(0, kakaoID);
-                return FirstFragment.newInstance(0, kakaoID);
+                return firstFragment;
             case 1: // Fragment # 0 - This will show FirstFragment different title
 //                return SecondFragment.newInstance(1, bm);
                 return secondFragment;

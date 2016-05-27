@@ -45,15 +45,15 @@ public class My_Profile_Image extends FragmentActivity{
 
 //        mData = new ArrayList<Bitmap>();
 
-
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdapter = new ImageAdapter(getLayoutInflater(), mData);
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setCurrentItem(0);
+//
+//        mViewPager = (ViewPager) findViewById(R.id.pager);
+//        mPagerAdapter = new ImageAdapter(getLayoutInflater(), mData);
+//        mViewPager.setAdapter(mPagerAdapter);
+//        mViewPager.setCurrentItem(0);
 //        mImageView = (ImageView) findViewById(R.id.image);
 
 //        mData.add(bm);
-        mPagerAdapter.notifyDataSetChanged();
+   //     mPagerAdapter.notifyDataSetChanged();
 
         //Log.d("image로 잘 넘어옴 : ", bm.toString());
 //

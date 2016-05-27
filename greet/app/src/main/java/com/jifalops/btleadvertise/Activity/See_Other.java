@@ -1,11 +1,14 @@
 package com.jifalops.btleadvertise.Activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,68 +18,97 @@ import com.jifalops.btleadvertise.R;
  * Created by client on 2016. 4. 4..
  */
 public class See_Other extends Activity{
-    TextView User_ID;
-    TextView User_Password;
-    TextView realtest;
-    ImageView PassingImage;
-    Context mContext;
+    private TextView keyword_1;
+    private TextView keyword_2;
+    private TextView keyword_3;
+    private TextView keyword_4;
+    private TextView keyword_5;
+    private ImageView Iv_profile_image;
+    private ImageView Iv_add_number;
+    private ImageView Iv_sns;
+    private ImageView Iv_add_card;
+    private ImageView Iv_video;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.see_other);
-
-       // User_Info uobj= getIntent().getParcelableExtra("userTag");
-
-//        PassingImage = (ImageView)findViewById(R.id.ivImage);
-//        User_ID = (TextView)findViewById(R.id.User_Id);
-//        User_Password = (TextView)findViewById(R.id.User_Password);
-//        realtest = (TextView)findViewById(R.id.TTTTest);
-
-        Intent intent = getIntent();
+        init();
 
 
+        Iv_video.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(See_Other.this)
+                        .setTitle("서비스 준비 중")
+                        .setMessage("서비스 준비 중입니다")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
 
+            }
+        });
+        Iv_sns.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(See_Other.this)
+                        .setTitle("서비스 준비 중")
+                        .setMessage("서비스 준비 중입니다")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
 
-        byte[] arr = getIntent().getByteArrayExtra("image");
-        Bitmap image = BitmapFactory.decodeByteArray(arr, 0, arr.length);
+            }
+        });
+        Iv_add_number.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(See_Other.this)
+                        .setTitle("서비스 준비 중")
+                        .setMessage("서비스 준비 중입니다")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
 
-        PassingImage.setImageBitmap(image);
+            }
+        });
+    }
 
-//        if(getIntent().hasExtra("byteArray"))
-//        { ImageView PassingImage = new ImageView(this);
-//            Bitmap b = BitmapFactory.decodeByteArray(getIntent().getByteArrayExtra("byteArray"), 0, getIntent().getByteArrayExtra("byteArray").length);
-//            PassingImage.setImageBitmap(b); }
-
-//        Bitmap bitmap = (Bitmap)intent.getExtras().get("1111");
-//        PassingImage.setImageBitmap(bitmap);
-        //PassingImage.setImageResource(image_link);
-        //startActivityForResult(intent, 1); // 값을 전달 다시 받아오기위해 forresult를 사용했다.
-        //realtest.setText(str);                      //출력내용 지정
-        //Log.d("str 값은: ", "" + str);
-        //Toast.makeText(getApplicationContext(), str, Toast.LENGTH_SHORT).show();
-
-       // hehe.execute(str);
-
+    public void init()
+    {
+        keyword_1 = (TextView) findViewById(R.id.keyword1);
+        keyword_2 = (TextView) findViewById(R.id.keyword2);
+        keyword_3 = (TextView) findViewById(R.id.keyword3);
+        keyword_4 = (TextView) findViewById(R.id.keyword4);
+        keyword_5 = (TextView) findViewById(R.id.keyword5);
+        keyword_1.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_2.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_3.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_4.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        keyword_5.setBackgroundResource(R.drawable.add_keyword_btn_keyword);
+        Iv_add_number = (ImageView) findViewById(R.id.Iv_add_number);
+        Iv_add_number.setImageResource(R.drawable.see_other_save_number);
+        Iv_sns = (ImageView) findViewById(R.id.Iv_sns);
+        Iv_sns.setImageResource(R.drawable.see_other_sns);
+        Iv_add_card = (ImageView) findViewById(R.id.Iv_add_card);
+        Iv_add_card.setImageResource(R.drawable.see_other_add);
+        Iv_profile_image = (ImageView) findViewById(R.id.Iv_profile_image);
+        Iv_video = (ImageView) findViewById(R.id.Iv_video);
+        Iv_video.setImageResource(R.drawable.my_profile_video_default);
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
-        //super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode){
-            case 1:
-                if(resultCode == RESULT_OK){
-                    String ret = data.getStringExtra("retVal"); //다시 받온 값을 여기서 처리한다.
-                    //TextView tv1 = (TextView)this.findViewById(R.id.textview);
-                    //tv1.setText(ret);
-                }else if(resultCode == RESULT_CANCELED){
-
-                }
-                break;
-        }
-
     }
-}

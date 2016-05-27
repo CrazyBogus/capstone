@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jifalops.btleadvertise.Card;
 import com.jifalops.btleadvertise.Database.DbOpenHelper;
 import com.jifalops.btleadvertise.R;
 import com.loopj.android.http.AsyncHttpClient;
@@ -54,7 +56,9 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import cz.msebera.android.httpclient.Header;
@@ -115,7 +119,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
     private String full_path;
     private String second_path;
     private ArrayList<String> onoff = new ArrayList<String>();
-    int card_number = 1;
+    private int card_number = 0;
     private String ttemp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -195,6 +199,22 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
 //
             }
         });
+        img_video.setOnClickListener(new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(Add_Profile.this)
+                        .setTitle("서비스 준비 중")
+                        .setMessage("서비스 준비 중입니다")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+
+            }
+        });
         //키워드 받기
         if(getIntent().hasExtra("keyword")) {
             keyword = getIntent().getStringArrayListExtra("keyword");
@@ -209,6 +229,11 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             kakaoID = getIntent().getStringExtra("kakaoID");
             Log.d("MainActivity: ", "카카오 정보 가져오기 성공!");
         }
+
+        getImagePath = createSaveCropFile();
+
+        SharedPreferences pref = getSharedPreferences("greet", MODE_PRIVATE);
+        card_number = pref.getInt("card_number", 0);
     }
     //레이아웃 설정
     private void init() {
@@ -255,13 +280,13 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         onoff_2.setImageResource(R.drawable.my_profile_toggle_on);
         onoff_3.setImageResource(R.drawable.my_profile_toggle_on);
         onoff_4.setImageResource(R.drawable.my_profile_toggle_on);
-        onoff_5.setImageResource(R.drawable.my_profile_toggle_on);
+        onoff_5.setImageResource(R.drawable.my_profile_toggle_off);
        if(onoff.size()==0) {
            onoff.add(0,"1");
            onoff.add(1,"1");
            onoff.add(2,"1");
            onoff.add(3,"1");
-           onoff.add(4,"1");
+           onoff.add(4,"0");
            Log.d("In onoff : ", " 온오프 추가");
        }
     }
@@ -282,26 +307,51 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         int id = item.getItemId();
         if (id == R.id.item_edit_complete) {
 
+            Card card = new Card();
+
             Intent newActivity = new Intent(Add_Profile.this, MainActivity.class);
             //여기서 프로필을 추가해준다.
             //이름과 사진은 필수로
             if ( Tv_name.getText().toString().length() != 0 && photo != null) {
+
+                String[] keywordList = {keyword_1.getText().toString().trim(), keyword_2.getText().toString().trim(), keyword_3.getText().toString().trim(),
+                        keyword_4.getText().toString().trim(), keyword_5.getText().toString().trim()};
+
+                for (String temp : keywordList) {
+                    if (!temp.equals("")) {
+                        card.keyword.add(temp);
+                    }
+                }
+
                 //비트맵 바이트로 변환
                 // 출력 스트림 생성, 압축, 바이트 어래이로 변환
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 photo.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
-
-
                 byte[] imageInByte = stream.toByteArray();
                 temp = imageInByte;
+
+
                 String nickname = Tv_name.getText().toString();
+                card.name = nickname;
+
                 String phonenumber = Tv_phonenumber.getText().toString();
-                if(Tv_phonenumber.getText().toString().length() == 0) phonenumber = "010-5136-6402";
+                card.phoneNumber = phonenumber;
+
+                if(Tv_phonenumber.getText().toString().length() == 0) phonenumber = "01051366402";
                 ArrayList<String> sns = new ArrayList<String>();
                 sns.add(0,Tv_sns1.getText().toString());
                 sns.add(1,Tv_sns2.getText().toString());
                 sns.add(2,Tv_sns3.getText().toString());
+
+                String sns1 = Tv_sns1.getText().toString().trim();
+                String sns2 = Tv_sns2.getText().toString().trim();
+                String sns3 = Tv_sns3.getText().toString().trim();
+
+                card.sns.add(sns1.equals("") ? "http://www.naver.com" : sns1);
+                card.sns.add(sns2.equals("") ? "http://www.google.com" : sns2);
+                card.sns.add(sns3.equals("") ? "http://www.facebook.com" : sns3);
+
                 if(Tv_sns1.getText().toString().length() == 0){
                     sns.remove(0);
                     sns.add(0, "http://www.naver.com");
@@ -314,21 +364,36 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                     sns.remove(2);
                     sns.add(2, "http://www.facebook.com");
                 }
-                String status = Tv_selfintro.getText().toString();
+                String status = Tv_selfintro.getText().toString().trim();
+                card.status = (status.equals("") ? "자기소개가 없습니다." : status);
+
                 if(Tv_selfintro.getText().toString().length() == 0) status = "자기소개가 없습니다";
                 // DB 열기
-                mDbOpenHelper = new DbOpenHelper(this);
-                mDbOpenHelper.open();
+//                mDbOpenHelper = new DbOpenHelper(this);
+//                mDbOpenHelper.open();
+//
+//                mDbOpenHelper.my_profile_insert(card_number,keyword,imageInByte, nickname, onoff, phonenumber, sns,status);
 
-                mDbOpenHelper.my_profile_insert(keyword,imageInByte, nickname, onoff, phonenumber, sns,status);
-    //            mDbOpenHelper.select();
-                serverConnect(card_number, nickname, phonenumber,keyword,sns,onoff,status,2);
+                card.cardNumber = card_number++;
+                SharedPreferences pref = getSharedPreferences("greet", MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+
+                editor.putInt("card_number", card_number);
+                editor.commit();
+
+               // mDbOpenHelper.my_info_selectAll("card");
+
+                serverConnect(card_number++, nickname, phonenumber,keyword,sns,onoff,status,1);
 
             }
             if(photo != null) {
                 newActivity.putExtra("bm", photo);
+                card.image = BitMapToString(photo);
+                newActivity.putExtra("card", card);
                 newActivity.putStringArrayListExtra("keyword", keyword);
                 newActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                addItem(card);
 
                 startActivity(newActivity);
             }
@@ -347,6 +412,35 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void addItem(Card card) {
+        SharedPreferences pref = getSharedPreferences("greet", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        Set<String> cardList = pref.getStringSet("cardList", new HashSet<String>());
+
+        try {
+
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.put("cardNumber", card.cardNumber);
+            jsonObject.put("image", card.image);
+            jsonObject.put("name", card.name);
+            jsonObject.put("phoneNumber", card.phoneNumber);
+
+            for (int i = 0; i < card.keyword.size(); i++) {
+                jsonObject.put("keyword" + (i + 1), card.keyword.get(i));
+            }
+
+            Log.d("click", jsonObject.toString());
+            cardList.add(jsonObject.toString());
+            editor.putStringSet("cardList", cardList);
+            editor.commit();
+
+        } catch (JSONException e) {
+
+        }
     }
 
     /**
@@ -391,20 +485,18 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 if(extras != null)
                 {
                     photo = extras.getParcelable("data");
-                    my_profile_image.setImageBitmap(photo);
+                    my_profile_image.setImageURI(getImagePath);
                     Log.d("Photo 값 : ", photo.toString());
                     mData.add(photo);
-
-
                 }
                 full_path = mTempImageUri.getPath();
-                second_path = getImagePath.getPath();
+//                second_path = getImagePath.getPath();
               //  getImagePath = mTempImageUri;
                 Log.d("Path : " , full_path);
             //     임시 파일 삭제
 
                 f = new File(full_path);
-                e = new File(second_path);
+
 
 
                   break;
@@ -417,13 +509,11 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 // 실제 코드에서는 좀더 합리적인 방법을 선택하시기 바랍니다.
                 mTempImageUri = data.getData();
                 original_file = getImageFile(mTempImageUri);
-                getImagePath = createSaveCropFile1();
                 mTempImageUri = createSaveCropFile();
                 copy_file = new File(mTempImageUri.getPath());
-                coffee_file = new File(getImagePath.getPath());
                 // SD카드에 저장된 파일을 이미지 Crop을 위해 복사한다.
                 copyFile(original_file , copy_file);
-                copyFile(original_file, coffee_file);
+
             }
 
             case PICK_FROM_CAMERA:
@@ -435,11 +525,12 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 intent.setDataAndType(mTempImageUri, "image/*");
                 intent.putExtra("aspectX", 73);
                 intent.putExtra("aspectY", 50);
-                intent.putExtra("outputX", 365);
-                intent.putExtra("outputY", 250);
+                //intent.putExtra("outputX", 200);
+                //intent.putExtra("outputY", 100);
                 intent.putExtra("noFaceDetection",true);
                 intent.putExtra("scale", true);
                 intent.putExtra("return-data", true);
+                intent.putExtra("output", getImagePath);
 
 //                Log.d("ttemp 값 : ", ttemp);
                 startActivityForResult(intent, CROP_FROM_CAMERA);
@@ -457,7 +548,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         flag_photo = true;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // 임시로 사용할 파일의 경로를 생성
-        String url = "1.jpg";
+        String url = "0.jpg";
         mTempImageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mTempImageUri);
         // 특정기기에서 사진을 저장못하는 문제가 있어 다음을 주석처리 합니다.
@@ -519,16 +610,16 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 }
                 break;
             case R.id.onoff_video:
-                if(onoff2) {
-                    onoff_5.setImageResource(R.drawable.my_profile_toggle_off);
-                    onoff.set(4,"0");
-                    onoff5=false;
-                }
-                else{
-                    onoff_5.setImageResource(R.drawable.my_profile_toggle_on);
-                    onoff.set(4,"1");
-                    onoff5=false;
-                }
+                new AlertDialog.Builder(Add_Profile.this)
+                        .setTitle("서비스 준비 중")
+                        .setMessage("서비스 준비 중입니다")
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
             case R.id.edit_profile_image:
                 DialogInterface.OnClickListener cameraListener = new DialogInterface.OnClickListener()
@@ -626,23 +717,23 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         onoff_5.setImageDrawable(null);
     }
 
-    public void serverConnect(int card_number, String nickname, String phonenumber, ArrayList<String> keyword, ArrayList<String> sns, ArrayList<String> onoff, String status, int image_size)
+    public void serverConnect(final int card_number, String nickname, String phonenumber, ArrayList<String> keyword, ArrayList<String> sns, ArrayList<String> onoff, String status, int image_size)
     {
 
 
-        String url = "http://52.69.46.152:8001/api/upload_card/android";
+        String url = "http://52.69.46.152:8000/api/upload_card/android";
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams param2 = new RequestParams();
         param2.setForceMultipartEntityContentType(true);
 
-        File file1, file2;
+        File file1;
         file1 = f;
-        file2 = e;
+
 
         client.addHeader("Accept", "*/*");
         client.setMaxRetriesAndTimeout(3, 30000);
         client.setUserAgent("android-async-http-1.4.9");
-        if(kakaoID==null) kakaoID="1234";
+        if(kakaoID==null) kakaoID="itsnotkakao123123";
 
         try {
             param2.put("id", kakaoID);
@@ -655,7 +746,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             param2.put("status_message",status);
             param2.put("image_size",image_size);
             param2.put("picture", file1);
-            param2.put("picture", file2);
+
         } catch(FileNotFoundException e) {e.printStackTrace();}
 
         client.post(mContext, url, param2, new JsonHttpResponseHandler() {
@@ -665,6 +756,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
                 try {
                      String connect_result = response.getString("result");
                     Log.d("result : ", connect_result);
+                    //  card_number++;
                 } catch (JSONException e) {}
 
                     }
@@ -689,7 +781,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
             onoff.add(1,"1");
             onoff.add(2,"1");
             onoff.add(3,"1");
-            onoff.add(4,"1");
+            onoff.add(4,"0");
             onoff.set(0,Integer.toString(tempOnoff));
         }
 
@@ -707,17 +799,7 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
      */
     private Uri createSaveCropFile(){
         Uri uri;
-        String url = "1.jpg";
-        uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
-        return uri;
-    }
-    /**
-     * Crop된 이미지가 저장될 파일을 만든다.
-     * @return Uri
-     */
-    private Uri createSaveCropFile1(){
-        Uri uri;
-        String url = "main.jpg";
+        String url = "0.jpg";
         uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
         return uri;
     }
@@ -793,6 +875,14 @@ public class Add_Profile extends ActionBarActivity implements View.OnClickListen
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
     }
 
 }
